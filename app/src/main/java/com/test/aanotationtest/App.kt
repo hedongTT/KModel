@@ -8,5 +8,7 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
         KModel.init(this)
+
+        // 测试一下
     }
 }
