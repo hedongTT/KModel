@@ -9,6 +9,6 @@ class App: Application() {
         super.onCreate()
         KModel.init(this)
 
-        // 测试一下
+        // 测试一下 // 改一下？
     }
 }
