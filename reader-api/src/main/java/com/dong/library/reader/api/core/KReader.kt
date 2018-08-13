@@ -3,6 +3,9 @@ package com.dong.library.reader.api.core
 import android.content.Context
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.lang.reflect.ParameterizedType
@@ -53,14 +56,35 @@ abstract class KReader<T> : _KReader() {
 
     private var mClient: OkHttpClient? = null
 
-    protected open fun generateRetrofit(): Retrofit {
+    private val mApiCls: Class<T>
+        get() {
+            val type: ParameterizedType = javaClass.genericSuperclass as ParameterizedType
+            @Suppress("UNCHECKED_CAST")
+            val cls: Class<T> = type.actualTypeArguments[0] as? Class<T> ?: throw RuntimeException()
+            if (!cls.isInterface) {
+                throw IllegalArgumentException("API declarations must be interfaces.")
+            }
+            return cls
+        }
 
-        return Retrofit.Builder()
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .baseUrl(baseUrl)
-                .client(generateOkHttpClient())
-                .build()
-    }
+    private var mApi: T? = null
+
+    private val mRetrofit: Retrofit
+        get() {
+            var retrofit: Retrofit? = sRetrofit
+
+            return if (retrofit == null) {
+                retrofit = Retrofit.Builder()
+                        .addConverterFactory(ScalarsConverterFactory.create())
+                        .baseUrl(baseUrl)
+                        .client(generateOkHttpClient())
+                        .build()
+                sRetrofit = retrofit
+                retrofit
+            } else {
+                retrofit
+            }
+        }
 
     private fun generateOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
             .addInterceptor { chain ->
@@ -75,16 +99,42 @@ abstract class KReader<T> : _KReader() {
 
     }
 
-    private val mApiCls: Class<T>
-        get() {
-            val type: ParameterizedType = javaClass.genericSuperclass as ParameterizedType
-            @Suppress("UNCHECKED_CAST")
-            val cls: Class<T> = type.actualTypeArguments[0] as? Class<T> ?: throw RuntimeException()
-            if (!cls.isInterface) {
-                throw IllegalArgumentException("API declarations must be interfaces.")
+    final override fun onRequest(key: String, params: MutableMap<String, Any>, callback: KReaderCallback) {
+        mApi = mApi ?: mRetrofit.create(mApiCls)
+        val api = mApi ?: throw RuntimeException()
+        onRequest(api, key, params, callback)
+    }
+
+    abstract fun onRequest(api: T, key: String, params: MutableMap<String, Any>, callback: KReaderCallback)
+
+    protected fun <T> applyCall(call: Call<String>, parser: IKHttpParser<T>) {
+
+        call.enqueue(object: Callback<String> {
+            /**
+             * Invoked when a network exception occurred talking to the server or when an unexpected
+             * exception occurred creating the request or processing the response.
+             */
+            override fun onFailure(call: Call<String>, t: Throwable) {
+
             }
-            return cls
-        }
+
+            /**
+             * Invoked for a received HTTP response.
+             *
+             *
+             * Note: An HTTP response may still indicate an application-level failure such as a 404 or 500.
+             * Call [Response.isSuccessful] to determine if the response indicates success.
+             */
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+
+                parser.onParse(response.headers(), response.body(), {
+
+                }, {
+
+                })
+            }
+        })
+    }
 
     companion object {
 

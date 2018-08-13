@@ -95,7 +95,6 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-//Éú³ÉÎÄµµ
 task javadoc(type: Javadoc) {
     failOnError false
 }

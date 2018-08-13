@@ -1,15 +1,13 @@
 package com.test.aanotationtest
 
 import com.dong.library.reader.annotations.Reader
+import com.dong.library.reader.api.core.IKHttpParser
 import com.dong.library.reader.api.core.KReader
 import com.dong.library.reader.api.core.KReaderCallback
+import okhttp3.Headers
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Header
-import java.lang.reflect.ParameterizedType
 
 abstract class Parser<T> {
     abstract fun onParse(code: Int, data: String?, complete: (t: T?) -> Unit)
@@ -18,84 +16,32 @@ abstract class Parser<T> {
     fun onInfo() {}
 }
 
-abstract class CReader<T> : KReader<T>() {
+@Reader(["A", "B"])
+class MainReader : KReader<Api>() {
 
-    private val mRetrofit: Retrofit
-        get() {
-            sRetrofit = sRetrofit ?: generateRetrofit()
-            return sRetrofit ?: throw RuntimeException()
-        }
+    override val baseUrl: String
+        get() = "http://192.168.1.119:8080"
 
-    private val mApiCls: Class<T>
-        get() {
-            val type: ParameterizedType = javaClass.genericSuperclass as ParameterizedType
-            @Suppress("UNCHECKED_CAST")
-            return type.actualTypeArguments[0] as? Class<T> ?: throw RuntimeException()
-        }
+    private fun <C> request(call: Call<String>, describe: Int, callback: KReaderCallback, parser: Parser<C>) {
+        callback.onReadStart(describe)
+    }
 
-    private var mApi: T? = null
-        get() {
-            if (field == null) {
-                field = mRetrofit.create(mApiCls)
-            }
-            return field
-        }
-//
-//    protected open fun generateRetrofit(): Retrofit {
-//
-//        return Retrofit.Builder()
-//                .addConverterFactory(ScalarsConverterFactory.create())
-//                .baseUrl("http://192.168.1.119:8080")
-//                .build()
-//    }
+    override fun onRequest(api: Api, key: String, params: MutableMap<String, Any>, callback: KReaderCallback) {
 
-    protected fun <C> onRequest(key: String, params: MutableMap<String, Any>, parser: Parser<C>) {
+        when (key) {
+            "A" -> {
+                val call: Call<String> = api.getUser("")
+                applyCall(call, object: IKHttpParser<String> {
 
-        getCall(mApi ?: throw RuntimeException("no api"), key, params)
-                .enqueue(object : Callback<String> {
+                    override fun onParse(headers: Headers, result: String, complete: (result: String?) -> Unit, error: (errorId: Int) -> Unit) {
 
-                    override fun onFailure(call: Call<String>?, t: Throwable?) {
-                        parser.onError()
                     }
 
-                    override fun onResponse(call: Call<String>?, response: Response<String>) {
-                        parser.onParse(response.code(), response.body(), {
-                            parser.onComplete(it)
-                        })
+                    override fun onComplete(result: String?) {
                     }
                 })
-    }
-
-    abstract fun getCall(api: T, key: String, params: MutableMap<String, Any>): Call<String>
-
-    companion object {
-
-        private var sRetrofit: Retrofit? = null
-    }
-}
-
-@Reader(["A", "B"])
-class MainReader : CReader<Api>() {
-
-    override fun getCall(api: Api, key: String, params: MutableMap<String, Any>): Call<String> {
-        return api.getUser("")
-    }
-
-    override fun onRequest(key: String, params: MutableMap<String, Any>, callback: KReaderCallback) {
-
-        callback.onReadStart()
-
-        super.onRequest(key, params, object : Parser<User>() {
-
-            override fun onParse(code: Int, data: String?, complete: (t: User?) -> Unit) {
-                println("code=$code, data=$data")
-                complete.invoke(null)
             }
-
-            override fun onComplete(t: User?) {
-                println("t=${t == null}")
-            }
-        })
+        }
     }
 
     data class User(val id: Long, val name: String)
