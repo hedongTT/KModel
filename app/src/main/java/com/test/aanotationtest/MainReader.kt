@@ -2,11 +2,11 @@ package com.test.aanotationtest
 
 import com.dong.library.reader.annotations.Reader
 import com.dong.library.reader.api.core.KReader
+import com.dong.library.reader.api.core.KReaderCallback
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Header
 import java.lang.reflect.ParameterizedType
@@ -18,7 +18,7 @@ abstract class Parser<T> {
     fun onInfo() {}
 }
 
-abstract class CReader<in T> : KReader() {
+abstract class CReader<T> : KReader<T>() {
 
     private val mRetrofit: Retrofit
         get() {
@@ -40,14 +40,14 @@ abstract class CReader<in T> : KReader() {
             }
             return field
         }
-
-    protected open fun generateRetrofit(): Retrofit {
-
-        return Retrofit.Builder()
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .baseUrl("http://192.168.1.119:8080")
-                .build()
-    }
+//
+//    protected open fun generateRetrofit(): Retrofit {
+//
+//        return Retrofit.Builder()
+//                .addConverterFactory(ScalarsConverterFactory.create())
+//                .baseUrl("http://192.168.1.119:8080")
+//                .build()
+//    }
 
     protected fun <C> onRequest(key: String, params: MutableMap<String, Any>, parser: Parser<C>) {
 
@@ -81,7 +81,7 @@ class MainReader : CReader<Api>() {
         return api.getUser("")
     }
 
-    override fun onRequest(key: String, params: MutableMap<String, Any>, callback: ICallback) {
+    override fun onRequest(key: String, params: MutableMap<String, Any>, callback: KReaderCallback) {
 
         callback.onReadStart()
 

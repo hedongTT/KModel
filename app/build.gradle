@@ -35,11 +35,6 @@ dependencies {
     implementation deps.support.appcompat.v7
     implementation deps.kotlin.stdLibJre8
 
-    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
-    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
-    implementation 'com.squareup.retrofit2:converter-scalars:2.0.2'
-
     implementation project(':reader-annotations')
     implementation project(':reader-api')
     kapt project(':reader-processors')

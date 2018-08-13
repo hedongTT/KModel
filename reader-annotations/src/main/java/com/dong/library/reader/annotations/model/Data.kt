@@ -5,7 +5,7 @@ package com.dong.library.reader.annotations.model
  */
 enum class KReaderType(val className: String) {
     UNKNOWN(""),
-    READER("com.dong.library.reader.api.core.KReader"),
+    READER("com.dong.library.reader.api.core._KReader"),
     READER_SERVICE("com.dong.library.reader.api.core.IKReaderApi")
 }
 

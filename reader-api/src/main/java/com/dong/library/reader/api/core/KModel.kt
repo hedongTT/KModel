@@ -17,13 +17,13 @@ object KModel {
 
         val extras: MutableMap<String, Any> = mutableMapOf()
 
-        var onReadStart: ((data: KReader.RequestData) -> Unit)? = null
+        var onReadStart: ((data: KReaderRequest) -> Unit)? = null
             private set
-        var onReadIng: ((data: KReader.RequestData) -> Unit)? = null
+        var onReadIng: ((data: KReaderRequest) -> Unit)? = null
             private set
-        var onReadComplete: ((data: KReader.RequestData) -> Unit)? = null
+        var onReadComplete: ((data: KReaderRequest) -> Unit)? = null
             private set
-        var onReadFailed: ((data: KReader.RequestData) -> Unit)? = null
+        var onReadFailed: ((data: KReaderRequest) -> Unit)? = null
             private set
 
         var onProcessBefore: ((navigator: Navigator, className: String) -> Unit)? = null
@@ -37,22 +37,22 @@ object KModel {
         var onProcessError: ((navigator: Navigator, className: String) -> Unit)? = null
             private set
 
-        fun onReadStart(callback: (data: KReader.RequestData) -> Unit): Navigator {
+        fun onReadStart(callback: (data: KReaderRequest) -> Unit): Navigator {
             this.onReadStart = callback
             return this
         }
 
-        fun onReadIng(callback: (data: KReader.RequestData) -> Unit): Navigator {
+        fun onReadIng(callback: (data: KReaderRequest) -> Unit): Navigator {
             this.onReadIng = callback
             return this
         }
 
-        fun onReadComplete(callback: (data: KReader.RequestData) -> Unit): Navigator {
+        fun onReadComplete(callback: (data: KReaderRequest) -> Unit): Navigator {
             this.onReadComplete = callback
             return this
         }
 
-        fun onReadFailed(callback: (data: KReader.RequestData) -> Unit): Navigator {
+        fun onReadFailed(callback: (data: KReaderRequest) -> Unit): Navigator {
             this.onReadFailed = callback
             return this
         }
