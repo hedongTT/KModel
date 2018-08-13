@@ -8,7 +8,7 @@ import com.dong.library.reader.annotations.PACKAGE
  * KReader class or interface
  */
 const val READER_LOADER = "$PACKAGE.api.interfaces.IKReaderLoader"
-const val KREADER = "$PACKAGE.api.core.KReader"
+const val KREADER = "$PACKAGE.api.core._KReader"
 
 /**
  * Android Type

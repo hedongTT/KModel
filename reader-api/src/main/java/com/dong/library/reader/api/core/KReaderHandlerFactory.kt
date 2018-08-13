@@ -35,29 +35,29 @@ internal class KReaderHandler(metadata: KReaderMetadata): IKReaderHandler(metada
 
     override fun handle(context: Context, navigator: KModel.Navigator): Any? {
         try {
-            val cls = metadata.readerCls
-            var reader = KReader.getReader(cls)
+            val cls: Class<*> = metadata.readerCls
+            var reader: _KReader? = _KReader.getReader(cls)
             if (reader == null) {
-                reader = cls.newInstance() as KReader
+                reader = cls.newInstance() as _KReader
                 reader.init(context)
-                KReader.addReader(cls, reader)
+                _KReader.addReader(cls, reader)
             }
 
-            reader.request(navigator.key, navigator.extras, object: KReader.ICallback(context) {
+            reader.request(navigator.key, navigator.extras, object: KReaderCallback(context) {
 
-                override fun onReadStart(data: KReader.RequestData) {
+                override fun onReadStart(data: KReaderRequest) {
                     navigator.onReadStart?.invoke(data)
                 }
 
-                override fun onReadIng(data: KReader.RequestData) {
+                override fun onReadIng(data: KReaderRequest) {
                     navigator.onReadIng?.invoke(data)
                 }
 
-                override fun onReadComplete(data: KReader.RequestData) {
+                override fun onReadComplete(data: KReaderRequest) {
                     navigator.onReadComplete?.invoke(data)
                 }
 
-                override fun onReadFailed(data: KReader.RequestData) {
+                override fun onReadFailed(data: KReaderRequest) {
                     navigator.onReadFailed?.invoke(data)
                 }
             })
