@@ -1,8 +1,10 @@
 package com.dong.library.reader.api.core
 
 import android.content.Context
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import android.support.annotation.CallSuper
+import okhttp3.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -13,7 +15,7 @@ import java.lang.reflect.ParameterizedType
 @Suppress("MemberVisibilityCanBePrivate", "ClassName")
 abstract class _KReader {
 
-    private lateinit var mContext: Context
+    protected lateinit var mContext: Context
 
     init {
         @Suppress("LeakingThis")
@@ -50,7 +52,7 @@ abstract class _KReader {
     }
 }
 
-abstract class KReader<T> : _KReader() {
+abstract class KReader<in T> : _KReader() {
 
     abstract val baseUrl: String
 
@@ -69,53 +71,63 @@ abstract class KReader<T> : _KReader() {
 
     private var mApi: T? = null
 
-    private val mRetrofit: Retrofit
-        get() {
-            var retrofit: Retrofit? = sRetrofit
+    private fun getApi(params: MutableMap<String, Any>): T {
+        val retrofit: Retrofit = getRetrofit(params)
 
-            return if (retrofit == null) {
-                retrofit = Retrofit.Builder()
-                        .addConverterFactory(ScalarsConverterFactory.create())
-                        .baseUrl(baseUrl)
-                        .client(generateOkHttpClient())
-                        .build()
-                sRetrofit = retrofit
-                retrofit
-            } else {
-                retrofit
-            }
-        }
+        mApi = mApi ?: retrofit.create(mApiCls)
 
-    private fun generateOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val original: Request = chain.request()
-                val builder: Request.Builder = original.newBuilder()
-                onHttpInterceptor(builder)
-                return@addInterceptor chain.proceed(builder.build())
-            }
-            .build()
+        return mApi ?: throw RuntimeException()
+    }
 
-    protected open fun onHttpInterceptor(builder: Request.Builder) {
+    private fun getRetrofit(params: MutableMap<String, Any>): Retrofit {
 
+        val client: OkHttpClient = getOkHttpClient(params)
+
+        sRetrofit = sRetrofit ?: Retrofit.Builder()
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .baseUrl(baseUrl)
+                .client(client)
+                .build()
+
+        return sRetrofit ?: throw RuntimeException()
+    }
+
+    private fun getOkHttpClient(params: MutableMap<String, Any>): OkHttpClient {
+        mClient = mClient ?: OkHttpClient.Builder().addInterceptor { chain ->
+            val builder: Request.Builder = onHttpInterceptor(chain.request(), params)
+            val request: Request = builder.build()
+            println("request=$request")
+            return@addInterceptor chain.proceed(request)
+        }.build()
+
+        return mClient ?: throw RuntimeException()
+    }
+
+    protected open fun onHttpInterceptor(request: Request, params: MutableMap<String, Any>): Request.Builder {
+        println("onHttpInterceptor builder=$request, url=${request.url()}, body=${request.body()}, method=${request.method()}")
+        return request.newBuilder()
     }
 
     final override fun onRequest(key: String, params: MutableMap<String, Any>, callback: KReaderCallback) {
-        mApi = mApi ?: mRetrofit.create(mApiCls)
-        val api = mApi ?: throw RuntimeException()
+        sCallback = callback
+        val api: T = getApi(params)
         onRequest(api, key, params, callback)
     }
 
     abstract fun onRequest(api: T, key: String, params: MutableMap<String, Any>, callback: KReaderCallback)
 
-    protected fun <T> applyCall(call: Call<String>, parser: IKHttpParser<T>) {
+    @CallSuper
+    protected open fun <Type> applyCall(describe: Int, call: Call<String>, parser: IKHttpParser<Type>) {
 
-        call.enqueue(object: Callback<String> {
+        sCallback?.onReadStart(describe)
+
+        call.enqueue(object : Callback<String> {
             /**
              * Invoked when a network exception occurred talking to the server or when an unexpected
              * exception occurred creating the request or processing the response.
              */
             override fun onFailure(call: Call<String>, t: Throwable) {
-
+                sCallback?.onReadFailed(t.message ?: "net failed")
             }
 
             /**
@@ -126,12 +138,35 @@ abstract class KReader<T> : _KReader() {
              * Call [Response.isSuccessful] to determine if the response indicates success.
              */
             override fun onResponse(call: Call<String>, response: Response<String>) {
+                doAsync {
+                    val code: Int = response.code()
+                    println("code=$code")
+                    val headers: Headers = response.headers()
+                    when (code) {
+                        200 -> {
+                            val body: String = response.body()
 
-                parser.onParse(response.headers(), response.body(), {
+                            parser.onParse(headers, body, { result: Type?, any: Any? ->
+                                uiThread {
+                                    parser.onComplete(result, any)
+                                }
+                            }, { errorCode: Int ->
+                                uiThread {
+                                    sCallback?.onReadError(errorCode, headers)
+                                }
+                            })
+                        }
 
-                }, {
-
-                })
+                        206 -> {
+                            // download?
+                        }
+                        else -> {
+                            uiThread {
+                                sCallback?.onReadError(code, headers)
+                            }
+                        }
+                    }
+                }
             }
         })
     }

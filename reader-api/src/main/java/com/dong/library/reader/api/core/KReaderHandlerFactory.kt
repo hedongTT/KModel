@@ -6,6 +6,7 @@ import com.dong.library.reader.annotations.model.KReaderType
 import com.dong.library.reader.api.exceptions.HandleException
 import com.dong.library.reader.api.exceptions.RouteNotFoundException
 import com.dong.library.reader.api.utils.Logger
+import okhttp3.Headers
 
 /**
  * 工厂类，根据不同ReaderType返回不同处理者
@@ -45,20 +46,24 @@ internal class KReaderHandler(metadata: KReaderMetadata): IKReaderHandler(metada
 
             reader.request(navigator.key, navigator.extras, object: KReaderCallback(context) {
 
-                override fun onReadStart(data: KReaderRequest) {
+                override fun onReadStart(data: KReaderResult) {
                     navigator.onReadStart?.invoke(data)
                 }
 
-                override fun onReadIng(data: KReaderRequest) {
+                override fun onReadIng(data: KReaderResult) {
                     navigator.onReadIng?.invoke(data)
                 }
 
-                override fun onReadComplete(data: KReaderRequest) {
+                override fun onReadComplete(data: KReaderResult) {
                     navigator.onReadComplete?.invoke(data)
                 }
 
-                override fun onReadFailed(data: KReaderRequest) {
+                override fun onReadFailed(data: KReaderResult) {
                     navigator.onReadFailed?.invoke(data)
+                }
+
+                override fun onReadError(code: Int, headers: Headers) {
+                    //navigator.onReadFailed?.invoke(data)
                 }
             })
 

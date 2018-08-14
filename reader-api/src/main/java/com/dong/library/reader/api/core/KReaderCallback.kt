@@ -3,6 +3,7 @@ package com.dong.library.reader.api.core
 import android.content.Context
 import android.support.annotation.StringRes
 import com.dong.library.reader.api.R
+import okhttp3.Headers
 
 abstract class KReaderCallback(internal val context: Context) {
 
@@ -14,8 +15,8 @@ abstract class KReaderCallback(internal val context: Context) {
         }
     }
 
-    private fun toInvoke(callback: (data: KReaderRequest) -> Unit, init: KReaderRequest.() -> Unit) {
-        val data = KReaderRequest()
+    private fun toInvoke(callback: (data: KReaderResult) -> Unit, init: KReaderResult.() -> Unit) {
+        val data = KReaderResult()
         data.init()
         callback.invoke(data)
     }
@@ -81,7 +82,7 @@ abstract class KReaderCallback(internal val context: Context) {
         })
     }
 
-    abstract fun onReadStart(data: KReaderRequest)
+    abstract fun onReadStart(data: KReaderResult)
     /**
      * OnReadStart End
      ****/
@@ -140,7 +141,7 @@ abstract class KReaderCallback(internal val context: Context) {
         })
     }
 
-    abstract fun onReadIng(data: KReaderRequest)
+    abstract fun onReadIng(data: KReaderResult)
     /**
      * OnReadIng End
      ****/
@@ -199,7 +200,7 @@ abstract class KReaderCallback(internal val context: Context) {
         })
     }
 
-    abstract fun onReadComplete(data: KReaderRequest)
+    abstract fun onReadComplete(data: KReaderResult)
 
     /**
      * OnReadComplete End
@@ -208,19 +209,25 @@ abstract class KReaderCallback(internal val context: Context) {
     /**
      * OnReadFailed Start
      ****/
-    fun onReadFailed(code: Int, describe: String) {
+    fun onReadFailed(describe: String) {
         toInvoke(this::onReadFailed, {
-            withCode(code)
             withDescribe(describe)
         })
     }
 
-    fun onReadFailed(init: KReaderRequest.() -> Unit) {
+    fun onReadFailed(init: KReaderResult.() -> Unit) {
         toInvoke(this::onReadFailed, init)
     }
 
-    abstract fun onReadFailed(data: KReaderRequest)
+    abstract fun onReadFailed(data: KReaderResult)
     /**
      * OnReadFailed End
+     ****/
+    /**
+     * OnReadError Start
+     ****/
+    abstract fun onReadError(code: Int, headers: Headers)
+    /**
+     * OnReadError End
      ****/
 }
