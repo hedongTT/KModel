@@ -1,6 +1,15 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext.publish = [
+            'userOrg' : 'hedongtt',
+            'repoName': 'KModel',
+            'groupId' : 'com.dong.library',
+            'desc'    : 'a annotation for model',
+            'website' : 'https://github.com/hedongTT/KModel',
+            'licences': ['Apache-2.0']
+    ]
+
     ext.versions = [
             'minSdk'        : 16,
             'compileSdk'    : 27,
@@ -64,7 +73,10 @@ buildscript {
         classpath "org.jetbrains.dokka:dokka-android-gradle-plugin:${versions.dokka}"
 
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+
+
+        classpath 'com.novoda:bintray-release:0.7.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -81,15 +93,17 @@ allprojects {
     }
 
     tasks.withType(Javadoc) {
-        options{
-            encoding "UTF-8"
-            charSet 'UTF-8'
-            links "http://docs.oracle.com/javase/7/docs/api"
-        }
+//        options {
+//            charSet 'UTF-8'
+//            links "http://docs.oracle.com/javase/7/docs/api"
+//        }
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+        options.addStringOption('charSet', 'UTF-8')
     }
 
+    tasks.findByPath(":reader-api:releaseAndroidJavadocs").enabled = false
 }
-
 
 task clean(type: Delete) {
     delete rootProject.buildDir
@@ -98,3 +112,4 @@ task clean(type: Delete) {
 task javadoc(type: Javadoc) {
     failOnError false
 }
+//gradlew clean build bintrayUpload -PbintrayUser=hedongtt -PbintrayKey=xxx -PdryRun=false
