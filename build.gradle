@@ -61,6 +61,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
         maven {
             url "http://repo.pageturner-reader.org"
         }
@@ -87,6 +88,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
         maven {
             url "http://repo.pageturner-reader.org"
         }
