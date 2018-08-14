@@ -5,12 +5,11 @@ package com.dong.library.reader.annotations.model
  */
 enum class KReaderType(val className: String) {
     UNKNOWN(""),
-    READER("com.dong.library.reader.api.core._KReader"),
-    READER_SERVICE("com.dong.library.reader.api.core.IKReaderApi")
+    READER("com.dong.library.reader.api.core._KReader")
 }
 
 /**
- * Description：Reader元数据，用于存储被[com.dong.library.reader.api.core.KReader]注解的类的信息
+ * Reader元数据，用于存储被[com.dong.library.reader.api.core.KReader]注解的类的信息
  */
 data class KReaderMetadata(
         /**
@@ -31,7 +30,7 @@ data class KReaderMetadata(
         val readerCls: Class<*> = Any::class.java)
 
 /**
- * Description：Interceptor元数据，用于存储被[com.dong.library.reader.annotations.Interceptor]注解的类的信息
+ * Interceptor元数据，用于存储被[com.dong.library.reader.annotations.Interceptor]注解的类的信息
  */
 data class InterceptorMetaData(
         /**
