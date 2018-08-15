@@ -25,21 +25,19 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation deps.kotlin.stdLibJre8
-    implementation project(':reader-annotations')
-    //implementation 'com.dong.library:reader-annotations:1.0.0'
+    implementation 'com.dong.library:reader-annotations:1.0.1'
 
     implementation 'com.squareup.retrofit2:converter-scalars:2.0.2'
     implementation 'org.jetbrains.anko:anko-sdk15:0.9.1'
-
-    api 'com.squareup.okhttp3:okhttp:3.9.1'
-    api 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
 
     implementation deps.support.appcompat.v7
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
-
+/*
 apply plugin: 'bintray-release'
 apply plugin: 'com.github.dcendents.android-maven'
 
@@ -62,3 +60,4 @@ publish {
     website     = rootProject.publish.website
     licences    = rootProject.publish.licences
 }
+*/

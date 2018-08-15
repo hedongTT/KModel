@@ -12,7 +12,7 @@ targetCompatibility = "1.8"
 repositories {
     mavenCentral()
 }
-
+/*
 apply plugin: 'bintray-release'
 apply plugin: 'com.github.dcendents.android-maven'
 
@@ -35,3 +35,4 @@ publish {
     website     = rootProject.publish.website
     licences    = rootProject.publish.licences
 }
+*/

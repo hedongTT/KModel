@@ -1,0 +1,52 @@
+apply plugin: 'groovy'
+apply plugin: 'java'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation localGroovy()
+    implementation gradleApi()
+    implementation 'com.dong.library:reader-annotations:1.0.1'
+    compileOnly deps.android.gradlePlugin
+}
+
+//repositories {
+//    mavenCentral()
+//}
+
+apply plugin: 'maven'
+
+//设置maven deployer
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //设置插件的GAV参数
+            pom.groupId = 'com.dong.library'
+            pom.artifactId = 'reader-plugin'
+            pom.version = 1.0
+            // 文件发布到下面目录
+            repository(url: uri('../release'))
+        }
+    }
+}
+
+apply plugin: 'bintray-release'
+
+if (project.hasProperty("kotlin")) {
+    apply plugin: 'org.jetbrains.dokka-android'
+    dokka {
+        outputFormat = 'html'
+        outputDirectory = "$buildDir/javadoc"
+    }
+}
+
+publish {
+    artifactId = 'reader-plugin'
+    uploadName = 'plugin'
+    publishVersion = '1.0.3'
+    userOrg     = rootProject.publish.userOrg
+    repoName    = rootProject.publish.repoName
+    groupId     = rootProject.publish.groupId
+    desc        = rootProject.publish.desc
+    website     = rootProject.publish.website
+    licences    = rootProject.publish.licences
+}

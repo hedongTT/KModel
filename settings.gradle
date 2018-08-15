@@ -1,1 +1,1 @@
-include ':app', ':reader-annotations', ':reader-processors', ':buildsrc', ':reader-api'
+include ':app', ':reader-annotations', ':reader-processors', ':reader-api', ':reader-plugin'

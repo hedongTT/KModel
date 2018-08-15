@@ -8,9 +8,9 @@ dependencies {
     implementation deps.kotlin.reflect
     implementation deps.kotlin.stdLibJre8
     implementation deps.kotlinpoet
-    implementation project(':reader-annotations')
+    implementation 'com.dong.library:reader-annotations:1.0.1'
 }
-
+/*
 apply plugin: 'bintray-release'
 apply plugin: 'com.github.dcendents.android-maven'
 
@@ -33,3 +33,4 @@ publish {
     website     = rootProject.publish.website
     licences    = rootProject.publish.licences
 }
+*/
