@@ -6,7 +6,7 @@ package com.dong.library.reader.plugin;
  * @since 18/3/2 下午5:22
  */
 public class Const {
-    public static String KREADER_API = "com.dong.library:reader-api:1.0.0";
+    public static String KREADER_API = "com.dong.library:reader-api:1.0.1";
     public static String KREADER_PROCESSOR = "com.dong.library:reader-processors:1.0.1";
     public static String KREADER_ANNOTATION = "com.dong.library:reader-annotations:1.0.1";
 

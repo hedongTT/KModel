@@ -42,7 +42,7 @@ if (project.hasProperty("kotlin")) {
 publish {
     artifactId = 'reader-plugin'
     uploadName = 'plugin'
-    publishVersion = '1.0.3'
+    publishVersion = '1.0.4'
     userOrg     = rootProject.publish.userOrg
     repoName    = rootProject.publish.repoName
     groupId     = rootProject.publish.groupId

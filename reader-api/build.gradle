@@ -52,7 +52,7 @@ if (project.hasProperty("kotlin")) {
 publish {
     artifactId = 'reader-api'
     uploadName = 'api'
-    publishVersion = '1.0.0'
+    publishVersion = '1.0.1'
     userOrg     = rootProject.publish.userOrg
     repoName    = rootProject.publish.repoName
     groupId     = rootProject.publish.groupId

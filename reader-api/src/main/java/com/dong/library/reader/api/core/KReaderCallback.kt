@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package com.dong.library.reader.api.core
 
 import android.content.Context
@@ -40,42 +42,42 @@ abstract class KReaderCallback(internal val context: Context) {
         })
     }
 
-    fun onReadStart(data: MutableMap<String, Any>) {
+    fun onReadStart(data: HashMap<String, Any>) {
         toInvoke(this::onReadStart, {
             withDescribe(context.getString(R.string.k_model_on_reader_start))
             withData(data)
         })
     }
 
-    fun onReadStart(dataInit: MutableMap<String, Any>.() -> Unit) {
+    fun onReadStart(dataInit: HashMap<String, Any>.() -> Unit) {
         toInvoke(this::onReadStart, {
             withDescribe(context.getString(R.string.k_model_on_reader_start))
             withData(dataInit)
         })
     }
 
-    fun onReadStart(@StringRes describe: Int, dataInit: MutableMap<String, Any>.() -> Unit) {
+    fun onReadStart(@StringRes describe: Int, dataInit: HashMap<String, Any>.() -> Unit) {
         toInvoke(this::onReadStart, {
             withDescribe(getString(describe, R.string.k_model_on_reader_start))
             withData(dataInit)
         })
     }
 
-    fun onReadStart(@StringRes describe: Int, data: MutableMap<String, Any>) {
+    fun onReadStart(@StringRes describe: Int, data: HashMap<String, Any>) {
         toInvoke(this::onReadStart, {
             withDescribe(getString(describe, R.string.k_model_on_reader_start))
             withData(data)
         })
     }
 
-    fun onReadStart(describe: String, dataInit: MutableMap<String, Any>.() -> Unit) {
+    fun onReadStart(describe: String, dataInit: HashMap<String, Any>.() -> Unit) {
         toInvoke(this::onReadStart, {
             withDescribe(describe)
             withData(dataInit)
         })
     }
 
-    fun onReadStart(describe: String, data: MutableMap<String, Any>) {
+    fun onReadStart(describe: String, data: HashMap<String, Any>) {
         toInvoke(this::onReadStart, {
             withDescribe(describe)
             withData(data)
@@ -106,35 +108,35 @@ abstract class KReaderCallback(internal val context: Context) {
         })
     }
 
-    fun onReadIng(dataInit: MutableMap<String, Any>.() -> Unit) {
+    fun onReadIng(dataInit: HashMap<String, Any>.() -> Unit) {
         toInvoke(this::onReadIng, {
             withDescribe(context.getString(R.string.k_model_on_reader_ing))
             withData(dataInit)
         })
     }
 
-    fun onReadIng(data: MutableMap<String, Any>) {
+    fun onReadIng(data: HashMap<String, Any>) {
         toInvoke(this::onReadIng, {
             withDescribe(context.getString(R.string.k_model_on_reader_ing))
             withData(data)
         })
     }
 
-    fun onReadIng(@StringRes describe: Int, dataInit: MutableMap<String, Any>.() -> Unit) {
+    fun onReadIng(@StringRes describe: Int, dataInit: HashMap<String, Any>.() -> Unit) {
         toInvoke(this::onReadIng, {
             withDescribe(getString(describe, R.string.k_model_on_reader_ing))
             withData(dataInit)
         })
     }
 
-    fun onReadIng(@StringRes describe: Int, data: MutableMap<String, Any>) {
+    fun onReadIng(@StringRes describe: Int, data: HashMap<String, Any>) {
         toInvoke(this::onReadIng, {
             withDescribe(getString(describe, R.string.k_model_on_reader_ing))
             withData(data)
         })
     }
 
-    fun onReadIng(describe: String, data: MutableMap<String, Any>) {
+    fun onReadIng(describe: String, data: HashMap<String, Any>) {
         toInvoke(this::onReadIng, {
             withDescribe(describe)
             withData(data)
@@ -172,28 +174,28 @@ abstract class KReaderCallback(internal val context: Context) {
         })
     }
 
-    fun onReadComplete(result: MutableMap<String, Any>) {
+    fun onReadComplete(result: HashMap<String, Any>) {
         toInvoke(this::onReadComplete, {
             withDescribe(context.getString(R.string.k_model_on_reader_complete))
             withData(result)
         })
     }
 
-    fun onReadComplete(@StringRes describe: Int, dataInit: MutableMap<String, Any>.() -> Unit) {
+    fun onReadComplete(@StringRes describe: Int, dataInit: HashMap<String, Any>.() -> Unit) {
         toInvoke(this::onReadComplete, {
             withDescribe(getString(describe, R.string.k_model_on_reader_complete))
             withData(dataInit)
         })
     }
 
-    fun onReadComplete(@StringRes describe: Int, result: MutableMap<String, Any>) {
+    fun onReadComplete(@StringRes describe: Int, result: HashMap<String, Any>) {
         toInvoke(this::onReadComplete, {
             withDescribe(getString(describe, R.string.k_model_on_reader_complete))
             withData(result)
         })
     }
 
-    fun onReadComplete(describe: String, result: MutableMap<String, Any>) {
+    fun onReadComplete(describe: String, result: HashMap<String, Any>) {
         toInvoke(this::onReadComplete, {
             withDescribe(describe)
             withData(result)

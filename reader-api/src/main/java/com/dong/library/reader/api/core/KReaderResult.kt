@@ -1,6 +1,6 @@
 package com.dong.library.reader.api.core
 
-@Suppress("MemberVisibilityCanBePrivate")
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 class KReaderResult : HashMap<String, Any>() {
 
     var describe: String? = null
@@ -20,7 +20,7 @@ class KReaderResult : HashMap<String, Any>() {
         this.code = code
     }
 
-    fun withData(init: MutableMap<String, Any>.() -> Unit) {
+    fun withData(init: HashMap<String, Any>.() -> Unit) {
         this.init()
     }
 
@@ -28,7 +28,7 @@ class KReaderResult : HashMap<String, Any>() {
         this.any = any
     }
 
-    fun withData(data: MutableMap<String, Any>) {
+    fun withData(data: HashMap<String, Any>) {
         for ((key, value) in data) {
             this[key] = value
         }

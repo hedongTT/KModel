@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.dong.library.reader.api.core
 
 import android.content.Context
@@ -117,7 +119,7 @@ abstract class KReader<in T> : _KReader() {
     abstract fun onRequest(api: T, key: String, params: MutableMap<String, Any>, callback: KReaderCallback)
 
     @CallSuper
-    protected open fun <Type> applyCall(describe: Int, call: Call<String>, parser: IKHttpParser<Type>) {
+    protected open fun <Type> applyCall(describe: Int, call: Call<String>, parser: IKReaderParser<Type>) {
 
         sCallback?.onReadStart(describe)
 
