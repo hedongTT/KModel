@@ -12,7 +12,7 @@ dependencies {
 //repositories {
 //    mavenCentral()
 //}
-
+/*
 apply plugin: 'maven'
 
 //设置maven deployer
@@ -50,3 +50,4 @@ publish {
     website     = rootProject.publish.website
     licences    = rootProject.publish.licences
 }
+*/

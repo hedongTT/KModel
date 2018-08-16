@@ -96,14 +96,13 @@ class KReaderProcessor : KBaseProcessor() {
 
         mLogger.info("Found ${readers.size} readers in [$mOriginalModuleName]")
 
-
         val loader = ParameterizedTypeName.get(ClassName("kotlin.collections", "MutableMap"), String::class.asClassName(), KReaderMetadata::class.asClassName())
         //Generate implement IRouteLoader interface class
         val methodBuilder = FunSpec.builder(com.dong.library.reader.METHOD_LOAD)
                 .addParameter("map", loader)
                 .addModifiers(KModifier.OVERRIDE)
 
-        collectMap(roundEnv, Reader::class.java, KReaderType.READER.className, { element, annotation ->
+        collectMap(roundEnv, Reader::class.java, KReaderType.READER.className) { element, annotation ->
 
             annotation.keys.forEach { key: String ->
                 if (!readerMap.containsKey(key)) {
@@ -117,17 +116,17 @@ class KReaderProcessor : KBaseProcessor() {
                      * val clazz: Class<*> = Any::class.java
                      */
                     methodBuilder.addStatement(
-                                "map[%S] = %T(%T.%L, %S, %S, %T::class.java)",
-                                key,
-                                KReaderMetadata::class,
-                                KReaderType::class,
-                                KReaderType.READER,
-                                key,
-                                element.asType().toString(),
-                                element.asType())
+                            "map[%S] = %T(%T.%L, %S, %S, %T::class.java)",
+                            key,
+                            KReaderMetadata::class,
+                            KReaderType::class,
+                            KReaderType.READER,
+                            key,
+                            element.asType().toString(),
+                            element.asType())
                 }
             }
-        })
+        }
 
         mLogger.info("$ROUTE_LOADER_NAME$SEPARATOR$mFormatModuleName")
 
@@ -140,8 +139,6 @@ class KReaderProcessor : KBaseProcessor() {
         val kotlinFile = FileSpec.builder(PACKAGE, "$ROUTE_LOADER_NAME$SEPARATOR$mFormatModuleName")
                 .addType(classLoader)
                 .build()
-
-        mLogger.info("----写入文件")
 
         kotlinFile.writeFile()
     }
@@ -217,6 +214,6 @@ class Logger(private val mMsg: Messager) {
     }
 
     companion object {
-        private const val PREFIX_OF_LOGGER = "KRouter::Compiler::"
+        private const val PREFIX_OF_LOGGER = "KReader::Compiler::"
     }
 }

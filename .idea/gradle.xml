@@ -9,9 +9,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/buildsrc" />
             <option value="$PROJECT_DIR$/reader-annotations" />
             <option value="$PROJECT_DIR$/reader-api" />
+            <option value="$PROJECT_DIR$/reader-plugin" />
             <option value="$PROJECT_DIR$/reader-processors" />
           </set>
         </option>

@@ -10,7 +10,7 @@ dependencies {
     implementation deps.kotlinpoet
     implementation 'com.dong.library:reader-annotations:1.0.1'
 }
-/*
+
 apply plugin: 'bintray-release'
 apply plugin: 'com.github.dcendents.android-maven'
 
@@ -25,7 +25,7 @@ if (project.hasProperty("kotlin")) {
 publish {
     artifactId = 'reader-processors'
     uploadName = 'processors'
-    publishVersion = '1.0.1'
+    publishVersion = '1.0.2'
     userOrg     = rootProject.publish.userOrg
     repoName    = rootProject.publish.repoName
     groupId     = rootProject.publish.groupId
@@ -33,4 +33,4 @@ publish {
     website     = rootProject.publish.website
     licences    = rootProject.publish.licences
 }
-*/
+
