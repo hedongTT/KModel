@@ -3,10 +3,7 @@ package com.test.aanotationtest
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.dong.library.reader.annotations.Reader
-import com.dong.library.reader.api.core.IKHttpParser
-import com.dong.library.reader.api.core.KModel
-import com.dong.library.reader.api.core.KReader
-import com.dong.library.reader.api.core.KReaderCallback
+import com.dong.library.reader.api.core.*
 
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.Headers
@@ -53,7 +50,7 @@ class MainReader : KReader<Api>() {
         get() = "http://baidu.com"
 
     override fun onRequest(api: Api, key: String, params: MutableMap<String, Any>, callback: KReaderCallback) {
-        applyCall(R.string.app_name, api.getUser("", 1), object: IKHttpParser<String> {
+        applyCall(R.string.app_name, api.getUser("", 1), object: IKReaderParser<String> {
 
             override fun onParse(headers: Headers, result: String, complete: (result: String?, any: Any?) -> Unit, error: (errorId: Int) -> Unit) {
                 complete.invoke(result, null)

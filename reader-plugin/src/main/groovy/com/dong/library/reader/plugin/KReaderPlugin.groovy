@@ -24,7 +24,7 @@ class KReaderPlugin implements Plugin<Project> {
             project.configurations.all { configuration ->
                 def name = configuration.name
                 if (name == "kapt") {
-                    System.out.println("Add reader-processors:1.0.1 dependency")
+                    System.out.println("Add reader-processors:${Const.V_PROCESSOR} dependency")
                     configuration.dependencies.add(project.dependencies.create(Const.KREADER_PROCESSOR))
                 }
             }
@@ -35,17 +35,17 @@ class KReaderPlugin implements Plugin<Project> {
                 project.configurations.all { configuration ->
                     def name = configuration.name
                     if (name == "implementation" || name == "compile") {
-                        System.out.println("Add reader-api:1.0.0 dependency")
+                        System.out.println("Add reader-api:${Const.V_API} dependency")
                         configuration.dependencies.add(project.dependencies.create(Const.KREADER_API))
-                        System.out.println("Add reader-annotations:1.0.1 dependency")
+                        System.out.println("Add reader-annotations:${Const.V_ANNOTATION} dependency")
                         configuration.dependencies.add(project.dependencies.create(Const.KREADER_ANNOTATION))
-                        System.out.println("Add okhttp:3.9.1 dependency")
+                        System.out.println("Add okhttp:${Const.V_OKHTTP} dependency")
                         configuration.dependencies.add(project.dependencies.create(Const.KREADER_OKHTTP))
-                        System.out.println("Add retrofit:2.1.0 dependency")
+                        System.out.println("Add retrofit:${Const.V_RETROFIT} dependency")
                         configuration.dependencies.add(project.dependencies.create(Const.KREADER_RETROFIT))
-                        System.out.println("Add rconverter-scalars:2.0.2 dependency")
+                        System.out.println("Add rconverter-scalars:${Const.V_SCALARS} dependency")
                         configuration.dependencies.add(project.dependencies.create(Const.KREADER_SCALARS))
-                        System.out.println("Add anko-sdk15:0.9.1 dependency")
+                        System.out.println("Add anko-sdk15:${Const.V_ANKO} dependency")
                         configuration.dependencies.add(project.dependencies.create(Const.KREADER_ANKO))
                     }
                 }

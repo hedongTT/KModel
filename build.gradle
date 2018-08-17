@@ -2,12 +2,36 @@
 
 buildscript {
     ext.publish = [
-            'userOrg' : 'hedongtt',
-            'repoName': 'KModel',
-            'groupId' : 'com.dong.library',
-            'desc'    : 'a annotation for model',
-            'website' : 'https://github.com/hedongTT/KModel',
-            'licences': ['Apache-2.0']
+            'userOrg'    : 'hedongtt',
+            'repoName'   : 'KModel',
+            'groupId'    : 'com.dong.library',
+            'desc'       : 'a annotation for model',
+            'website'    : 'https://github.com/hedongTT/KModel',
+            'licences'   : ['Apache-2.0'],
+            'api'        : [
+                    'id'  : 'reader-api',
+                    'name': 'api',
+                    'use' : false,
+                    'v'   : '1.0.3'
+            ],
+            'processors' : [
+                    'id'  : 'reader-processors',
+                    'name': 'processors',
+                    'use' : false,
+                    'v'   : '1.0.3'
+            ],
+            'annotations': [
+                    'id'  : 'reader-annotations',
+                    'name': 'annotations',
+                    'use' : false,
+                    'v'   : '1.0.1'
+            ],
+            'plugin'     : [
+                    'id'  : 'reader-plugin',
+                    'name': 'plugin',
+                    'use' : true,
+                    'v'   : '1.0.6'
+            ]
     ]
 
     ext.versions = [
@@ -108,7 +132,10 @@ allprojects {
         options.addStringOption('charSet', 'UTF-8')
     }
 
-    /*提交reader-api时才使用该配置*///tasks.findByPath(":reader-api:releaseAndroidJavadocs").enabled = false
+    /*提交reader-api时才使用该配置*/
+    if (rootProject.publish.api.use == true) {
+        tasks.findByPath(":reader-api:releaseAndroidJavadocs").enabled = false
+    }
 }
 
 task clean(type: Delete) {

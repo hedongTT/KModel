@@ -12,42 +12,42 @@ dependencies {
 //repositories {
 //    mavenCentral()
 //}
-/*
-apply plugin: 'maven'
+if (rootProject.publish.plugin.use == true) {
+    apply plugin: 'maven'
 
 //设置maven deployer
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            //设置插件的GAV参数
-            pom.groupId = 'com.dong.library'
-            pom.artifactId = 'reader-plugin'
-            pom.version = 1.0
-            // 文件发布到下面目录
-            repository(url: uri('../release'))
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                //设置插件的GAV参数
+                pom.groupId = rootProject.publish.groupId
+                pom.artifactId = rootProject.publish.plugin.id
+                pom.version = 1.0
+                // 文件发布到下面目录
+                repository(url: uri('../release'))
+            }
         }
     }
-}
 
-apply plugin: 'bintray-release'
+    apply plugin: 'bintray-release'
 
-if (project.hasProperty("kotlin")) {
-    apply plugin: 'org.jetbrains.dokka-android'
-    dokka {
-        outputFormat = 'html'
-        outputDirectory = "$buildDir/javadoc"
+    if (project.hasProperty("kotlin")) {
+        apply plugin: 'org.jetbrains.dokka-android'
+        dokka {
+            outputFormat = 'html'
+            outputDirectory = "$buildDir/javadoc"
+        }
+    }
+
+    publish {
+        artifactId = rootProject.publish.plugin.id
+        uploadName = rootProject.publish.plugin.name
+        publishVersion = rootProject.publish.plugin.v
+        userOrg = rootProject.publish.userOrg
+        repoName = rootProject.publish.repoName
+        groupId = rootProject.publish.groupId
+        desc = rootProject.publish.desc
+        website = rootProject.publish.website
+        licences = rootProject.publish.licences
     }
 }
-
-publish {
-    artifactId = 'reader-plugin'
-    uploadName = 'plugin'
-    publishVersion = '1.0.4'
-    userOrg     = rootProject.publish.userOrg
-    repoName    = rootProject.publish.repoName
-    groupId     = rootProject.publish.groupId
-    desc        = rootProject.publish.desc
-    website     = rootProject.publish.website
-    licences    = rootProject.publish.licences
-}
-*/

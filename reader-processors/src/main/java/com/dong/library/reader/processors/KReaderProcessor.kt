@@ -108,6 +108,8 @@ class KReaderProcessor : KBaseProcessor() {
                 if (!readerMap.containsKey(key)) {
                     readerMap[key] = KReaderMetadata(name = element.asType().toString())
 
+                    mLogger.info("Found KReader --- ${element.asType()}")
+
                     /**
                      * val readerType
                      * val key: String = "",
@@ -163,7 +165,6 @@ class KReaderProcessor : KBaseProcessor() {
         }
     }
 }
-
 
 //
 //@AutoService(Processor::class)

@@ -12,27 +12,28 @@ targetCompatibility = "1.8"
 repositories {
     mavenCentral()
 }
-/*
-apply plugin: 'bintray-release'
-apply plugin: 'com.github.dcendents.android-maven'
 
-if (project.hasProperty("kotlin")) {
-    apply plugin: 'org.jetbrains.dokka-android'
-    dokka {
-        outputFormat = 'html'
-        outputDirectory = "$buildDir/javadoc"
+if (rootProject.publish.annotations.use == true) {
+    apply plugin: 'bintray-release'
+    apply plugin: 'com.github.dcendents.android-maven'
+
+    if (project.hasProperty("kotlin")) {
+        apply plugin: 'org.jetbrains.dokka-android'
+        dokka {
+            outputFormat = 'html'
+            outputDirectory = "$buildDir/javadoc"
+        }
+    }
+
+    publish {
+        artifactId = rootProject.publish.annotations.id
+        uploadName = rootProject.publish.annotations.name
+        publishVersion = rootProject.publish.annotations.v
+        userOrg = rootProject.publish.userOrg
+        repoName = rootProject.publish.repoName
+        groupId = rootProject.publish.groupId
+        desc = rootProject.publish.desc
+        website = rootProject.publish.website
+        licences = rootProject.publish.licences
     }
 }
-
-publish {
-    artifactId  = 'reader-annotations'
-    uploadName  = 'annotations'
-    publishVersion = '1.0.1'
-    userOrg     = rootProject.publish.userOrg
-    repoName    = rootProject.publish.repoName
-    groupId     = rootProject.publish.groupId
-    desc        = rootProject.publish.desc
-    website     = rootProject.publish.website
-    licences    = rootProject.publish.licences
-}
-*/

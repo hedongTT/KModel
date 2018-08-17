@@ -2,11 +2,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -37,27 +37,30 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
-/*
-apply plugin: 'bintray-release'
-apply plugin: 'com.github.dcendents.android-maven'
 
-if (project.hasProperty("kotlin")) {
-    apply plugin: 'org.jetbrains.dokka-android'
-    dokka {
-        outputFormat = 'html'
-        outputDirectory = "$buildDir/javadoc"
+if (rootProject.publish.api.use == true) {
+
+    apply plugin: 'bintray-release'
+    apply plugin: 'com.github.dcendents.android-maven'
+
+    if (project.hasProperty("kotlin")) {
+        apply plugin: 'org.jetbrains.dokka-android'
+        dokka {
+            outputFormat = 'html'
+            outputDirectory = "$buildDir/javadoc"
+        }
+    }
+
+    publish {
+        artifactId = rootProject.publish.api.id
+        uploadName = rootProject.publish.api.name
+        publishVersion = rootProject.publish.api.v
+        userOrg = rootProject.publish.userOrg
+        repoName = rootProject.publish.repoName
+        groupId = rootProject.publish.groupId
+        desc = rootProject.publish.desc
+        website = rootProject.publish.website
+        licences = rootProject.publish.licences
     }
 }
 
-publish {
-    artifactId = 'reader-api'
-    uploadName = 'api'
-    publishVersion = '1.0.1'
-    userOrg     = rootProject.publish.userOrg
-    repoName    = rootProject.publish.repoName
-    groupId     = rootProject.publish.groupId
-    desc        = rootProject.publish.desc
-    website     = rootProject.publish.website
-    licences    = rootProject.publish.licences
-}
-*/

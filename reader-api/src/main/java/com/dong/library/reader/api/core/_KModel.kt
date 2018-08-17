@@ -1,7 +1,7 @@
 package com.dong.library.reader.api.core
 
 import android.annotation.SuppressLint
-import android.app.Fragment
+//import android.app.Fragment
 import android.content.Context
 import com.dong.library.reader.annotations.*
 import com.dong.library.reader.annotations.model.KReaderMetadata
@@ -68,9 +68,7 @@ internal class _KModel private constructor() {
                 } else {
                     val result = it.handle(context, navigator)
                     navigator.onProcessArrived?.invoke(navigator, it.metadata.readerCls.name)
-                    if (result is Fragment || result is android.support.v4.app.Fragment) {
-                        return result
-                    }
+                    return result
                 }
             } catch (e: HandleException) {
                 e.printStackTrace()
