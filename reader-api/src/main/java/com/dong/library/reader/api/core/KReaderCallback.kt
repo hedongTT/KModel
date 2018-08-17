@@ -167,7 +167,7 @@ abstract class KReaderCallback(internal val context: Context) {
         }
     }
 
-    fun onReadComplete(dataInit: MutableMap<String, Any>.() -> Unit) {
+    fun onReadComplete(dataInit: HashMap<String, Any>.() -> Unit) {
         toInvoke(this::onReadComplete) {
             withDescribe(context.getString(R.string.k_model_on_reader_complete))
             withData(dataInit)
