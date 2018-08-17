@@ -1,11 +1,11 @@
 package com.test.aanotationtest
 
-import com.dong.library.reader.api.core.IKHttpParser
+import com.dong.library.reader.api.core.IKReaderParser
 import com.dong.library.reader.api.core.KReader
 import okhttp3.*
 import retrofit2.Call
 
-interface ICHttpParser<T>: IKHttpParser<T> {
+interface ICHttpParser<T>: IKReaderParser<T> {
 
     private fun parseHeaders(headers: Headers, callback: (token: String?, code: Int, msg: String, pageNo: Int, pageCount: Int, dataCount: Int) -> Unit) {
         val token: String? = headers.get("Authorization_User")
@@ -22,7 +22,7 @@ interface ICHttpParser<T>: IKHttpParser<T> {
 
     override fun onParse(headers: Headers, result: String, complete: (result: T?, any: Any?) -> Unit, error: (errorId: Int) -> Unit) {
         // parser the headers
-        parseHeaders(headers, { token, code, msg, pageNo, pageCount, dataCount ->
+        parseHeaders(headers) { token, code, msg, pageNo, pageCount, dataCount ->
             val pager: Pager? = if (pageNo == Int.MIN_VALUE || pageCount == Int.MIN_VALUE || dataCount == Int.MIN_VALUE) {
                 null
             } else {
@@ -33,7 +33,7 @@ interface ICHttpParser<T>: IKHttpParser<T> {
             }, {
                 error.invoke(it)
             })
-        })
+        }
     }
 
     fun onParse(code: Int, msg: String, result: String, pager: Pager?, complete: (result: T?) -> Unit, error: (messageId: Int) -> Unit)
@@ -100,14 +100,14 @@ abstract class CReader<in T> : KReader<T>() {
         return builder
     }
 
-    private fun <Type> convertParser(parser: IKHttpParser<Type>): ICHttpParser<Type> {
+    private fun <Type> convertParser(parser: IKReaderParser<Type>): ICHttpParser<Type> {
         if (parser !is ICHttpParser<Type>) {
             throw RuntimeException("Parser be implement ICHttpParser!")
         }
         return parser
     }
 
-    override fun <Type> applyCall(describe: Int, call: Call<String>, parser: IKHttpParser<Type>) {
+    override fun <Type> applyCall(describe: Int, call: Call<String>, parser: IKReaderParser<Type>) {
         super.applyCall(describe, call, convertParser(parser))
     }
 }
