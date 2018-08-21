@@ -15,7 +15,7 @@ object KModel {
     @Suppress("unused")
     class Navigator internal constructor(val key: String) {
 
-        val extras: MutableMap<String, Any> = mutableMapOf()
+        val extras: HashMap<String, Any> = HashMap()
 
         var onReadStart: ((data: KReaderResult) -> Unit)? = null
             private set
@@ -87,12 +87,12 @@ object KModel {
             return this
         }
 
-        fun withParams(init: MutableMap<String, Any>.() -> Unit): Navigator {
+        fun withParams(init: HashMap<String, Any>.() -> Unit): Navigator {
             extras.init()
             return this
         }
 
-        fun withParams(params: MutableMap<String, Any>): Navigator {
+        fun withParams(params: HashMap<String, Any>): Navigator {
             for ((key, value) in params) {
                 extras[key] = value
             }

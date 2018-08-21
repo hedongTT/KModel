@@ -211,6 +211,12 @@ abstract class KReaderCallback(internal val context: Context) {
     /**
      * OnReadFailed Start
      ****/
+    fun onReadFailed(describe: Int) {
+        toInvoke(this::onReadFailed) {
+            withDescribe(context.getString(describe))
+        }
+    }
+
     fun onReadFailed(describe: String) {
         toInvoke(this::onReadFailed) {
             withDescribe(describe)

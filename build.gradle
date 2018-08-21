@@ -12,7 +12,7 @@ buildscript {
                     'id'  : 'reader-api',
                     'name': 'api',
                     'use' : false,
-                    'v'   : '1.0.4'
+                    'v'   : '1.0.10'
             ],
             'processors' : [
                     'id'  : 'reader-processors',
@@ -29,8 +29,8 @@ buildscript {
             'plugin'     : [
                     'id'  : 'reader-plugin',
                     'name': 'plugin',
-                    'use' : false,
-                    'v'   : '1.0.7'
+                    'use' : true,
+                    'v'   : '1.0.13'
             ]
     ]
 

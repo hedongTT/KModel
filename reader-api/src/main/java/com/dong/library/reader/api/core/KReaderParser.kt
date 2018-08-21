@@ -4,6 +4,6 @@ import okhttp3.Headers
 
 interface IKReaderParser<T> {
 
-    fun onParse(headers: Headers, result: String, complete: (result: T?, any: Any?) -> Unit, error: (errorId: Int) -> Unit)
-    fun onComplete(result: T?, any: Any?)
+    fun onParse(headers: Headers, result: String, complete: (code: Int, result: T?, any: Any?) -> Unit, error: (errorId: Int) -> Unit)
+    fun onComplete(code: Int, result: T?, any: Any?)
 }

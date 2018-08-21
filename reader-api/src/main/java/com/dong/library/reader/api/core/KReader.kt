@@ -4,6 +4,7 @@ package com.dong.library.reader.api.core
 
 import android.content.Context
 import android.support.annotation.CallSuper
+import com.dong.library.reader.api.utils.Logger
 import okhttp3.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -33,16 +34,16 @@ abstract class _KReader {
 
     protected var sCallback: KReaderCallback? = null
 
-    internal fun request(key: String, params: MutableMap<String, Any>, callback: KReaderCallback) {
+    internal fun request(key: String, params: HashMap<String, Any>, callback: KReaderCallback) {
         sCallback = callback
         onRequest(key, params, callback)
     }
 
-    abstract fun onRequest(key: String, params: MutableMap<String, Any>, callback: KReaderCallback)
+    abstract fun onRequest(key: String, params: HashMap<String, Any>, callback: KReaderCallback)
 
     companion object {
 
-        private var mReaderMap: MutableMap<Class<*>, _KReader> = mutableMapOf()
+        private var mReaderMap: HashMap<Class<*>, _KReader> = HashMap()
 
         internal fun getReader(cls: Class<*>): _KReader? {
             return mReaderMap[cls]
@@ -73,7 +74,7 @@ abstract class KReader<in T> : _KReader() {
 
     private var mApi: T? = null
 
-    private fun getApi(params: MutableMap<String, Any>): T {
+    private fun getApi(params: HashMap<String, Any>): T {
         val retrofit: Retrofit = getRetrofit(params)
 
         mApi = mApi ?: retrofit.create(mApiCls)
@@ -81,7 +82,7 @@ abstract class KReader<in T> : _KReader() {
         return mApi ?: throw RuntimeException()
     }
 
-    private fun getRetrofit(params: MutableMap<String, Any>): Retrofit {
+    private fun getRetrofit(params: HashMap<String, Any>): Retrofit {
 
         val client: OkHttpClient = getOkHttpClient(params)
 
@@ -94,7 +95,7 @@ abstract class KReader<in T> : _KReader() {
         return sRetrofit ?: throw RuntimeException()
     }
 
-    private fun getOkHttpClient(params: MutableMap<String, Any>): OkHttpClient {
+    private fun getOkHttpClient(params: HashMap<String, Any>): OkHttpClient {
         mClient = mClient ?: OkHttpClient.Builder().addInterceptor { chain ->
             val builder: Request.Builder = onHttpInterceptor(chain.request(), params)
             val request: Request = builder.build()
@@ -105,23 +106,26 @@ abstract class KReader<in T> : _KReader() {
         return mClient ?: throw RuntimeException()
     }
 
-    protected open fun onHttpInterceptor(request: Request, params: MutableMap<String, Any>): Request.Builder {
-        println("onHttpInterceptor builder=$request, url=${request.url()}, body=${request.body()}, method=${request.method()}")
+    protected open fun onHttpInterceptor(request: Request, params: HashMap<String, Any>): Request.Builder {
+        Logger.d("onHttpInterceptor builder=$request, url=${request.url()}, body=${request.body()}, method=${request.method()}")
         return request.newBuilder()
     }
 
-    final override fun onRequest(key: String, params: MutableMap<String, Any>, callback: KReaderCallback) {
+    final override fun onRequest(key: String, params: HashMap<String, Any>, callback: KReaderCallback) {
         sCallback = callback
+        Logger.d("onRequest key=$key")
         val api: T = getApi(params)
         onRequest(api, key, params, callback)
     }
 
-    abstract fun onRequest(api: T, key: String, params: MutableMap<String, Any>, callback: KReaderCallback)
+    abstract fun onRequest(api: T, key: String, params: HashMap<String, Any>, callback: KReaderCallback)
 
     @CallSuper
     protected open fun <Type> applyCall(describe: Int, call: Call<String>, parser: IKReaderParser<Type>) {
 
         sCallback?.onReadStart(describe)
+
+        Logger.d("applyCall describe=${mContext.getString(describe)}")
 
         call.enqueue(object : Callback<String> {
             /**
@@ -129,6 +133,7 @@ abstract class KReader<in T> : _KReader() {
              * exception occurred creating the request or processing the response.
              */
             override fun onFailure(call: Call<String>, t: Throwable) {
+                Logger.d("applyCall onFailure")
                 sCallback?.onReadFailed(t.message ?: "net failed")
             }
 
@@ -142,17 +147,19 @@ abstract class KReader<in T> : _KReader() {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 doAsync {
                     val code: Int = response.code()
-                    println("code=$code")
+                    Logger.d("applyCall onResponse code=$code")
                     val headers: Headers = response.headers()
                     when (code) {
                         200 -> {
                             val body: String = response.body()
 
-                            parser.onParse(headers, body, { result: Type?, any: Any? ->
+                            parser.onParse(headers, body, { c: Int, result: Type?, any: Any? ->
+                                Logger.d("applyCall onResponse parse complete")
                                 uiThread {
-                                    parser.onComplete(result, any)
+                                    parser.onComplete(c, result, any)
                                 }
                             }, { errorCode: Int ->
+                                Logger.d("applyCall onResponse parse error code=$errorCode")
                                 uiThread {
                                     sCallback?.onReadError(errorCode, headers)
                                 }
@@ -161,8 +168,11 @@ abstract class KReader<in T> : _KReader() {
 
                         206 -> {
                             // download?
+                            Logger.d("applyCall onResponse 206, try to download")
+                            onDownload(headers, response.errorBody())
                         }
                         else -> {
+                            Logger.d("applyCall onResponse unKnow code: $code")
                             uiThread {
                                 sCallback?.onReadError(code, headers)
                             }
@@ -172,6 +182,8 @@ abstract class KReader<in T> : _KReader() {
             }
         })
     }
+
+    protected open fun onDownload(headers: Headers, body: ResponseBody) {}
 
     companion object {
 

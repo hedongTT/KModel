@@ -32,7 +32,7 @@ internal class UnknownReaderHandler(metadata: KReaderMetadata) : IKReaderHandler
     }
 }
 
-internal class KReaderHandler(metadata: KReaderMetadata): IKReaderHandler(metadata) {
+internal class KReaderHandler(metadata: KReaderMetadata) : IKReaderHandler(metadata) {
 
     override fun handle(context: Context, navigator: KModel.Navigator): Any? {
         try {
@@ -44,7 +44,7 @@ internal class KReaderHandler(metadata: KReaderMetadata): IKReaderHandler(metada
                 _KReader.addReader(cls, reader)
             }
 
-            reader.request(navigator.key, navigator.extras, object: KReaderCallback(context) {
+            reader.request(navigator.key, navigator.extras, object : KReaderCallback(context) {
 
                 override fun onReadStart(data: KReaderResult) {
                     navigator.onReadStart?.invoke(data)
@@ -63,7 +63,9 @@ internal class KReaderHandler(metadata: KReaderMetadata): IKReaderHandler(metada
                 }
 
                 override fun onReadError(code: Int, headers: Headers) {
-                    //navigator.onReadFailed?.invoke(data)
+                    val data = KReaderResult()
+                    data.withCode(code)
+                    navigator.onReadFailed?.invoke(data)
                 }
             })
 
