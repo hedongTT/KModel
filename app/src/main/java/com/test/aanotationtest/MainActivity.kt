@@ -2,11 +2,12 @@ package com.test.aanotationtest
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import com.dong.library.reader.annotations.Reader
 import com.dong.library.reader.api.core.*
 
-import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.Headers
+import org.jetbrains.anko.find
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        button.setOnClickListener {
+        find<Button>(R.id.button).setOnClickListener {
             request("Abc", {
                 put("a", 1)
                 put("b", 2)
