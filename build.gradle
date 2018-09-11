@@ -12,7 +12,7 @@ buildscript {
                     'id'  : 'reader-api',
                     'name': 'api',
                     'use' : false,
-                    'v'   : '1.0.14'
+                    'v'   : '1.0.15'
             ],
             'processors' : [
                     'id'  : 'reader-processors',
@@ -29,8 +29,8 @@ buildscript {
             'plugin'     : [
                     'id'  : 'reader-plugin',
                     'name': 'plugin',
-                    'use' : true,
-                    'v'   : '1.0.17'
+                    'use' : false,
+                    'v'   : '1.0.18'
             ]
     ]
 
@@ -86,12 +86,8 @@ buildscript {
         google()
         jcenter()
         //mavenCentral()
-        maven {
-            url "http://repo.pageturner-reader.org"
-        }
-        maven {
-            url "https://dl.bintray.com/hedongtt/KModel"
-        }
+        maven { url "http://repo.pageturner-reader.org" }
+        maven { url "https://dl.bintray.com/hedongtt/KModel" }
     }
 
     dependencies {
@@ -106,7 +102,7 @@ buildscript {
 
         classpath 'com.novoda:bintray-release:0.7.0'
 
-        classpath "com.dong.library:reader-plugin:1.0.7"
+        classpath "com.dong.library:reader-plugin:1.0.18"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -118,12 +114,8 @@ allprojects {
         google()
         jcenter()
         //mavenCentral()
-        maven {
-            url "http://repo.pageturner-reader.org"
-        }
-        maven {
-            url "https://dl.bintray.com/hedongtt/KModel"
-        }
+        maven { url "http://repo.pageturner-reader.org" }
+        maven { url "https://dl.bintray.com/hedongtt/KModel" }
     }
 
     tasks.withType(Javadoc) {

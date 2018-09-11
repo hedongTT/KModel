@@ -6,7 +6,7 @@ package com.dong.library.reader.plugin;
  * @since 18/3/2 下午5:22
  */
 public class Const {
-    public static String V_API = "1.0.14";
+    public static String V_API = "1.0.15";
     public static String V_PROCESSOR = "1.0.3";
     public static String V_ANNOTATION = "1.0.1";
     public static String V_OKHTTP = "3.9.1";
