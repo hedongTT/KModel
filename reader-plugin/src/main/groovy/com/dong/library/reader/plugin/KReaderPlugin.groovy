@@ -45,6 +45,8 @@ class KReaderPlugin implements Plugin<Project> {
                         configuration.dependencies.add(project.dependencies.create(Const.KREADER_RETROFIT))
                         System.out.println("Add rconverter-scalars:${Const.V_SCALARS} dependency")
                         configuration.dependencies.add(project.dependencies.create(Const.KREADER_SCALARS))
+                        System.out.println("Add rconverter-gson:${Const.V_GSON} dependency")
+                        configuration.dependencies.add(project.dependencies.create(Const.KREADER_GSON))
                         System.out.println("Add anko-sdk15:${Const.V_ANKO} dependency")
                         configuration.dependencies.add(project.dependencies.create(Const.KREADER_ANKO))
                     }

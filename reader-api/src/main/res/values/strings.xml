@@ -3,4 +3,5 @@
     <string name="k_model_on_reader_start">正在读取数据</string>
     <string name="k_model_on_reader_ing">正在读取数据</string>
     <string name="k_model_on_reader_complete">读取数据完成</string>
+    <string name="k_model_on_reader_failed">读取数据失败</string>
 </resources>

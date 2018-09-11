@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.dong.library.reader.api.exceptions
 
 /**
@@ -14,6 +16,7 @@ open class HandleException : RuntimeException {
 }
 
 class RouteNotFoundException : HandleException {
+
     constructor(msg: String): super(msg)
 
     constructor(throwable: Throwable): super(throwable)

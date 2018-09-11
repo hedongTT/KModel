@@ -1,8 +1,14 @@
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package com.dong.library.reader.api.core
 
 import android.content.Context
+import com.dong.library.reader.api.core.callback.IKResultCallback
+import com.dong.library.reader.api.utils.Logger
 
 object KModel {
+
+    fun openDebug(): Unit = Logger.openDebug()
 
     fun init(context: Context) {
         _KModel.init(context)
@@ -15,70 +21,62 @@ object KModel {
     @Suppress("unused")
     class Navigator internal constructor(val key: String) {
 
-        val extras: HashMap<String, Any> = HashMap()
+        internal val extras: HashMap<String, Any> = HashMap()
 
-        var onReadStart: ((data: KReaderResult) -> Unit)? = null
+        internal var onReadStart: IKResultCallback? = null
             private set
-        var onReadIng: ((data: KReaderResult) -> Unit)? = null
+        internal var onReadIng: IKResultCallback? = null
             private set
-        var onReadComplete: ((data: KReaderResult) -> Unit)? = null
+        internal var onReadComplete: IKResultCallback? = null
             private set
-        var onReadFailed: ((data: KReaderResult) -> Unit)? = null
+        internal var onReadFailed: IKResultCallback? = null
             private set
 
-        var onProcessBefore: ((navigator: Navigator, className: String) -> Unit)? = null
-            private set
-        var onProcessNotFound: ((navigator: Navigator, className: String) -> Unit)? = null
-            private set
-        var onProcessArrived: ((navigator: Navigator, className: String) -> Unit)? = null
-            private set
-        var onProcessIntercept: ((navigator: Navigator, className: String) -> Unit)? = null
-            private set
-        var onProcessError: ((navigator: Navigator, className: String) -> Unit)? = null
-            private set
+        private fun createCallbackIpl(callback: (data: KReaderResult) -> Unit): IKResultCallback {
+
+            return object : IKResultCallback {
+
+                override fun onCallback(result: KReaderResult) {
+                    callback.invoke(result)
+                }
+            }
+        }
 
         fun onReadStart(callback: (data: KReaderResult) -> Unit): Navigator {
+            return onReadStart(createCallbackIpl(callback))
+        }
+
+        fun onReadStart(callback: IKResultCallback): Navigator {
             this.onReadStart = callback
             return this
         }
 
         fun onReadIng(callback: (data: KReaderResult) -> Unit): Navigator {
+            return onReadIng(createCallbackIpl(callback))
+        }
+
+        fun onReadIng(callback: IKResultCallback): Navigator {
             this.onReadIng = callback
             return this
         }
 
         fun onReadComplete(callback: (data: KReaderResult) -> Unit): Navigator {
+            onReadComplete(createCallbackIpl(callback))
+            return this
+        }
+
+        fun onReadComplete(callback: IKResultCallback): Navigator {
             this.onReadComplete = callback
             return this
         }
 
         fun onReadFailed(callback: (data: KReaderResult) -> Unit): Navigator {
+            onReadFailed(createCallbackIpl(callback))
+            return this
+        }
+
+        fun onReadFailed(callback: IKResultCallback): Navigator {
             this.onReadFailed = callback
-            return this
-        }
-
-        fun onProcessBefore(callback: (navigator: Navigator, className: String) -> Unit): Navigator {
-            this.onProcessBefore = callback
-            return this
-        }
-
-        fun onProcessNotFound(callback: (navigator: Navigator, className: String) -> Unit): Navigator {
-            this.onProcessNotFound = callback
-            return this
-        }
-
-        fun onProcessArrived(callback: (navigator: Navigator, className: String) -> Unit): Navigator {
-            this.onProcessArrived = callback
-            return this
-        }
-
-        fun onProcessIntercept(callback: (navigator: Navigator, className: String) -> Unit): Navigator {
-            this.onProcessIntercept = callback
-            return this
-        }
-
-        fun onProcessError(callback: (navigator: Navigator, className: String) -> Unit): Navigator {
-            this.onProcessError = callback
             return this
         }
 

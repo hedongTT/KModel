@@ -1,17 +1,19 @@
+@file:Suppress("UnnecessaryVariable", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "ClassName")
+
 package com.dong.library.reader.api.core
 
 import android.annotation.SuppressLint
-//import android.app.Fragment
 import android.content.Context
 import com.dong.library.reader.annotations.*
 import com.dong.library.reader.annotations.model.KReaderMetadata
+import com.dong.library.reader.api.core.factory.createHandler
+import com.dong.library.reader.api.core.handler.IKReaderHandler
 import com.dong.library.reader.api.data.KReaderTable
 import com.dong.library.reader.api.exceptions.HandleException
 import com.dong.library.reader.api.interfaces.IKReaderLoader
 import com.dong.library.reader.api.interfaces.IKReaderInterceptor
 import com.dong.library.reader.api.utils.Logger
 
-@Suppress("ClassName")
 internal class _KModel private constructor() {
 
     internal lateinit var context: Context
@@ -54,25 +56,27 @@ internal class _KModel private constructor() {
     fun request(navigator: KModel.Navigator): Any? {
         val map = addressingComponent(navigator)
         if (map.isEmpty()) {
-            navigator.onProcessNotFound?.invoke(navigator, "")
+            Logger.e("Can not find the reader by key ${navigator.key}")
+            //context.toast(context.getString(R.string.k_model_no_reader, navigator.key))
             return null
         }
 
         val handlers = createReaderHandler(map)
         val isIntercept = isIntercept(navigator)
         handlers.forEach {
-            navigator.onProcessBefore?.invoke(navigator, it.metadata.readerCls.name)
+            //Logger.d(context.getString(R.string.k_model_no_reader, navigator.key))
+            //navigator.onProcessBefore?.invoke(navigator, it.metadata.readerCls.name)
             try {
                 if (isIntercept) {
-                    navigator.onProcessIntercept?.invoke(navigator, it.metadata.readerCls.name)
+                    //navigator.onProcessIntercept?.invoke(navigator, it.metadata.readerCls.name)
                 } else {
                     val result = it.handle(context, navigator)
-                    navigator.onProcessArrived?.invoke(navigator, it.metadata.readerCls.name)
+                    //navigator.onProcessArrived?.invoke(navigator, it.metadata.readerCls.name)
                     return result
                 }
             } catch (e: HandleException) {
                 e.printStackTrace()
-                navigator.onProcessError?.invoke(navigator, it.metadata.readerCls.name)
+                //navigator.onProcessError?.invoke(navigator, it.metadata.readerCls.name)
             }
         }
         return null

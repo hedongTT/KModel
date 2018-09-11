@@ -4,6 +4,8 @@ package com.dong.library.reader.api.core
 
 import android.content.Context
 import android.support.annotation.CallSuper
+import com.dong.library.reader.api.core.callback.KReaderCallback
+import com.dong.library.reader.api.core.parser.IKReaderParser
 import com.dong.library.reader.api.utils.Logger
 import okhttp3.*
 import org.jetbrains.anko.doAsync
@@ -12,6 +14,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.lang.reflect.ParameterizedType
 
@@ -88,6 +91,7 @@ abstract class KReader<in T> : _KReader() {
 
         sRetrofit = sRetrofit ?: Retrofit.Builder()
                 .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(baseUrl)
                 .client(client)
                 .build()
@@ -97,23 +101,18 @@ abstract class KReader<in T> : _KReader() {
 
     private fun getOkHttpClient(params: HashMap<String, Any>): OkHttpClient {
         mClient = mClient ?: OkHttpClient.Builder().addInterceptor { chain ->
-            val builder: Request.Builder = onHttpInterceptor(chain.request(), params)
-            val request: Request = builder.build()
-            println("request=$request")
-            return@addInterceptor chain.proceed(request)
+            return@addInterceptor chain.proceed(onHttpInterceptor(chain.request(), params))
         }.build()
 
         return mClient ?: throw RuntimeException()
     }
 
-    protected open fun onHttpInterceptor(request: Request, params: HashMap<String, Any>): Request.Builder {
-        Logger.d("onHttpInterceptor builder=$request, url=${request.url()}, body=${request.body()}, method=${request.method()}")
-        return request.newBuilder()
+    protected open fun onHttpInterceptor(request: Request, params: HashMap<String, Any>): Request {
+        return request
     }
 
     final override fun onRequest(key: String, params: HashMap<String, Any>, callback: KReaderCallback) {
         sCallback = callback
-        Logger.d("onRequest key=$key")
         val api: T = getApi(params)
         onRequest(api, key, params, callback)
     }
@@ -123,7 +122,7 @@ abstract class KReader<in T> : _KReader() {
     @CallSuper
     protected open fun <Type> applyCall(describe: Int, call: Call<String>, parser: IKReaderParser<Type>) {
 
-        sCallback?.onReadStart(describe)
+        sCallback?.onStart(describe)
 
         Logger.d("applyCall describe=${mContext.getString(describe)}")
 
@@ -134,7 +133,7 @@ abstract class KReader<in T> : _KReader() {
              */
             override fun onFailure(call: Call<String>, t: Throwable) {
                 Logger.d("applyCall onFailure")
-                sCallback?.onReadFailed(t.message ?: "net failed")
+                sCallback?.onFailed(t.message ?: "net failed")
             }
 
             /**
@@ -156,12 +155,12 @@ abstract class KReader<in T> : _KReader() {
                             parser.onParse(headers, body, { c: Int, result: Type?, any: Any? ->
                                 Logger.d("applyCall onResponse parse complete")
                                 uiThread {
-                                    parser.onComplete(c, result, any)
+                                    parser.onComplete(KRequestInfo(c, any), result)
                                 }
-                            }, { errorCode: Int ->
+                            }, { errorCode: Int, describe: Int ->
                                 Logger.d("applyCall onResponse parse error code=$errorCode")
                                 uiThread {
-                                    sCallback?.onReadError(errorCode, headers)
+                                    sCallback?.onFailed(errorCode, describe)
                                 }
                             })
                         }
@@ -174,7 +173,7 @@ abstract class KReader<in T> : _KReader() {
                         else -> {
                             Logger.d("applyCall onResponse unKnow code: $code")
                             uiThread {
-                                sCallback?.onReadError(code, headers)
+                                sCallback?.onFailed(code)
                             }
                         }
                     }

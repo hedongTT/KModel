@@ -20,12 +20,12 @@ class KReaderResult : HashMap<String, Any>() {
         this.code = code
     }
 
-    fun withData(init: HashMap<String, Any>.() -> Unit) {
-        this.init()
+    fun withAny(any: Any?) {
+        this.any = any
     }
 
-    fun withAny(any: Any) {
-        this.any = any
+    fun withData(init: HashMap<String, Any>.() -> Unit) {
+        this.init()
     }
 
     fun withData(data: HashMap<String, Any>) {

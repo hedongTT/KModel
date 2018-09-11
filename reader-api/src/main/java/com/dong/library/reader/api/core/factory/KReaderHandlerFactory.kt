@@ -1,12 +1,16 @@
-package com.dong.library.reader.api.core
+package com.dong.library.reader.api.core.factory
 
 import android.content.*
 import com.dong.library.reader.annotations.model.KReaderMetadata
 import com.dong.library.reader.annotations.model.KReaderType
+import com.dong.library.reader.api.core.KModel
+import com.dong.library.reader.api.core.KReaderResult
+import com.dong.library.reader.api.core._KReader
+import com.dong.library.reader.api.core.callback.KReaderCallback
+import com.dong.library.reader.api.core.handler.IKReaderHandler
 import com.dong.library.reader.api.exceptions.HandleException
 import com.dong.library.reader.api.exceptions.RouteNotFoundException
 import com.dong.library.reader.api.utils.Logger
-import okhttp3.Headers
 
 /**
  * 工厂类，根据不同ReaderType返回不同处理者
@@ -46,26 +50,20 @@ internal class KReaderHandler(metadata: KReaderMetadata) : IKReaderHandler(metad
 
             reader.request(navigator.key, navigator.extras, object : KReaderCallback(context) {
 
-                override fun onReadStart(data: KReaderResult) {
-                    navigator.onReadStart?.invoke(data)
+                override fun onStart(data: KReaderResult) {
+                    navigator.onReadStart?.onCallback(data)
                 }
 
-                override fun onReadIng(data: KReaderResult) {
-                    navigator.onReadIng?.invoke(data)
+                override fun onProgress(data: KReaderResult) {
+                    navigator.onReadIng?.onCallback(data)
                 }
 
-                override fun onReadComplete(data: KReaderResult) {
-                    navigator.onReadComplete?.invoke(data)
+                override fun onComplete(data: KReaderResult) {
+                    navigator.onReadComplete?.onCallback(data)
                 }
 
-                override fun onReadFailed(data: KReaderResult) {
-                    navigator.onReadFailed?.invoke(data)
-                }
-
-                override fun onReadError(code: Int, headers: Headers) {
-                    val data = KReaderResult()
-                    data.withCode(code)
-                    navigator.onReadFailed?.invoke(data)
+                override fun onFailed(data: KReaderResult) {
+                    navigator.onReadFailed?.onCallback(data)
                 }
             })
 

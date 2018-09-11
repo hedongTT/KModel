@@ -1,7 +1,8 @@
-package com.dong.library.reader.api.core
+package com.dong.library.reader.api.core.handler
 
 import android.content.Context
 import com.dong.library.reader.annotations.model.KReaderMetadata
+import com.dong.library.reader.api.core.KModel
 import com.dong.library.reader.api.exceptions.HandleException
 
 /**

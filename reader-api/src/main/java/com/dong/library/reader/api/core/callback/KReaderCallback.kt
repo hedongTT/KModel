@@ -1,11 +1,11 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
-package com.dong.library.reader.api.core
+package com.dong.library.reader.api.core.callback
 
 import android.content.Context
 import android.support.annotation.StringRes
 import com.dong.library.reader.api.R
-import okhttp3.Headers
+import com.dong.library.reader.api.core.KReaderResult
 
 abstract class KReaderCallback(internal val context: Context) {
 
@@ -26,65 +26,65 @@ abstract class KReaderCallback(internal val context: Context) {
     /**
      * OnReadStart Start
      ****/
-    fun onReadStart() {
-        onReadStart(R.string.k_model_on_reader_start)
+    fun onStart() {
+        onStart(R.string.k_model_on_reader_start)
     }
 
-    fun onReadStart(@StringRes describe: Int) {
-        toInvoke(this::onReadStart) {
+    fun onStart(@StringRes describe: Int) {
+        toInvoke(this::onStart) {
             withDescribe(getString(describe, R.string.k_model_on_reader_start))
         }
     }
 
-    fun onReadStart(describe: String) {
-        toInvoke(this::onReadStart) {
+    fun onStart(describe: String) {
+        toInvoke(this::onStart) {
             withDescribe(describe)
         }
     }
 
-    fun onReadStart(data: HashMap<String, Any>) {
-        toInvoke(this::onReadStart) {
+    fun onStart(data: HashMap<String, Any>) {
+        toInvoke(this::onStart) {
             withDescribe(context.getString(R.string.k_model_on_reader_start))
             withData(data)
         }
     }
 
-    fun onReadStart(dataInit: HashMap<String, Any>.() -> Unit) {
-        toInvoke(this::onReadStart) {
+    fun onStart(dataInit: HashMap<String, Any>.() -> Unit) {
+        toInvoke(this::onStart) {
             withDescribe(context.getString(R.string.k_model_on_reader_start))
             withData(dataInit)
         }
     }
 
-    fun onReadStart(@StringRes describe: Int, dataInit: HashMap<String, Any>.() -> Unit) {
-        toInvoke(this::onReadStart) {
+    fun onStart(@StringRes describe: Int, dataInit: HashMap<String, Any>.() -> Unit) {
+        toInvoke(this::onStart) {
             withDescribe(getString(describe, R.string.k_model_on_reader_start))
             withData(dataInit)
         }
     }
 
-    fun onReadStart(@StringRes describe: Int, data: HashMap<String, Any>) {
-        toInvoke(this::onReadStart) {
+    fun onStart(@StringRes describe: Int, data: HashMap<String, Any>) {
+        toInvoke(this::onStart) {
             withDescribe(getString(describe, R.string.k_model_on_reader_start))
             withData(data)
         }
     }
 
-    fun onReadStart(describe: String, dataInit: HashMap<String, Any>.() -> Unit) {
-        toInvoke(this::onReadStart) {
+    fun onStart(describe: String, dataInit: HashMap<String, Any>.() -> Unit) {
+        toInvoke(this::onStart) {
             withDescribe(describe)
             withData(dataInit)
         }
     }
 
-    fun onReadStart(describe: String, data: HashMap<String, Any>) {
-        toInvoke(this::onReadStart) {
+    fun onStart(describe: String, data: HashMap<String, Any>) {
+        toInvoke(this::onStart) {
             withDescribe(describe)
             withData(data)
         }
     }
 
-    abstract fun onReadStart(data: KReaderResult)
+    abstract fun onStart(data: KReaderResult)
     /**
      * OnReadStart End
      ****/
@@ -92,58 +92,58 @@ abstract class KReaderCallback(internal val context: Context) {
     /**
      * OnReadIng Start
      ****/
-    fun onReadIng() {
-        onReadIng(R.string.k_model_on_reader_ing)
+    fun onProgress() {
+        onProgress(R.string.k_model_on_reader_ing)
     }
 
-    fun onReadIng(@StringRes describe: Int) {
-        toInvoke(this::onReadIng) {
+    fun onProgress(@StringRes describe: Int) {
+        toInvoke(this::onProgress) {
             withDescribe(getString(describe, R.string.k_model_on_reader_ing))
         }
     }
 
-    fun onReadIng(describe: String) {
-        toInvoke(this::onReadIng) {
+    fun onProgress(describe: String) {
+        toInvoke(this::onProgress) {
             withDescribe(describe)
         }
     }
 
-    fun onReadIng(dataInit: HashMap<String, Any>.() -> Unit) {
-        toInvoke(this::onReadIng) {
+    fun onProgress(dataInit: HashMap<String, Any>.() -> Unit) {
+        toInvoke(this::onProgress) {
             withDescribe(context.getString(R.string.k_model_on_reader_ing))
             withData(dataInit)
         }
     }
 
-    fun onReadIng(data: HashMap<String, Any>) {
-        toInvoke(this::onReadIng) {
+    fun onProgress(data: HashMap<String, Any>) {
+        toInvoke(this::onProgress) {
             withDescribe(context.getString(R.string.k_model_on_reader_ing))
             withData(data)
         }
     }
 
-    fun onReadIng(@StringRes describe: Int, dataInit: HashMap<String, Any>.() -> Unit) {
-        toInvoke(this::onReadIng) {
+    fun onProgress(@StringRes describe: Int, dataInit: HashMap<String, Any>.() -> Unit) {
+        toInvoke(this::onProgress) {
             withDescribe(getString(describe, R.string.k_model_on_reader_ing))
             withData(dataInit)
         }
     }
 
-    fun onReadIng(@StringRes describe: Int, data: HashMap<String, Any>) {
-        toInvoke(this::onReadIng) {
+    fun onProgress(@StringRes describe: Int, data: HashMap<String, Any>) {
+        toInvoke(this::onProgress) {
             withDescribe(getString(describe, R.string.k_model_on_reader_ing))
             withData(data)
         }
     }
 
-    fun onReadIng(describe: String, data: HashMap<String, Any>) {
-        toInvoke(this::onReadIng) {
+    fun onProgress(describe: String, data: HashMap<String, Any>) {
+        toInvoke(this::onProgress) {
             withDescribe(describe)
             withData(data)
         }
     }
 
-    abstract fun onReadIng(data: KReaderResult)
+    abstract fun onProgress(data: KReaderResult)
     /**
      * OnReadIng End
      ****/
@@ -151,58 +151,58 @@ abstract class KReaderCallback(internal val context: Context) {
     /**
      * OnReadComplete Start
      ****/
-    fun onReadComplete() {
-        onReadComplete(R.string.k_model_on_reader_complete)
+    fun onComplete() {
+        onComplete(R.string.k_model_on_reader_complete)
     }
 
-    fun onReadComplete(@StringRes describe: Int) {
-        toInvoke(this::onReadComplete) {
+    fun onComplete(@StringRes describe: Int) {
+        toInvoke(this::onComplete) {
             withDescribe(getString(describe, R.string.k_model_on_reader_complete))
         }
     }
 
-    fun onReadComplete(describe: String) {
-        toInvoke(this::onReadComplete) {
+    fun onComplete(describe: String) {
+        toInvoke(this::onComplete) {
             withDescribe(describe)
         }
     }
 
-    fun onReadComplete(dataInit: HashMap<String, Any>.() -> Unit) {
-        toInvoke(this::onReadComplete) {
+    fun onComplete(dataInit: HashMap<String, Any>.() -> Unit) {
+        toInvoke(this::onComplete) {
             withDescribe(context.getString(R.string.k_model_on_reader_complete))
             withData(dataInit)
         }
     }
 
-    fun onReadComplete(result: HashMap<String, Any>) {
-        toInvoke(this::onReadComplete) {
+    fun onComplete(result: HashMap<String, Any>) {
+        toInvoke(this::onComplete) {
             withDescribe(context.getString(R.string.k_model_on_reader_complete))
             withData(result)
         }
     }
 
-    fun onReadComplete(@StringRes describe: Int, dataInit: HashMap<String, Any>.() -> Unit) {
-        toInvoke(this::onReadComplete) {
+    fun onComplete(@StringRes describe: Int, dataInit: HashMap<String, Any>.() -> Unit) {
+        toInvoke(this::onComplete) {
             withDescribe(getString(describe, R.string.k_model_on_reader_complete))
             withData(dataInit)
         }
     }
 
-    fun onReadComplete(@StringRes describe: Int, result: HashMap<String, Any>) {
-        toInvoke(this::onReadComplete) {
+    fun onComplete(@StringRes describe: Int, result: HashMap<String, Any>) {
+        toInvoke(this::onComplete) {
             withDescribe(getString(describe, R.string.k_model_on_reader_complete))
             withData(result)
         }
     }
 
-    fun onReadComplete(describe: String, result: HashMap<String, Any>) {
-        toInvoke(this::onReadComplete) {
+    fun onComplete(describe: String, result: HashMap<String, Any>) {
+        toInvoke(this::onComplete) {
             withDescribe(describe)
             withData(result)
         }
     }
 
-    abstract fun onReadComplete(data: KReaderResult)
+    abstract fun onComplete(data: KReaderResult)
 
     /**
      * OnReadComplete End
@@ -211,31 +211,38 @@ abstract class KReaderCallback(internal val context: Context) {
     /**
      * OnReadFailed Start
      ****/
-    fun onReadFailed(describe: Int) {
-        toInvoke(this::onReadFailed) {
-            withDescribe(context.getString(describe))
+    fun onFailed(code: Int) {
+        toInvoke(this::onFailed) {
+            withCode(code)
         }
     }
 
-    fun onReadFailed(describe: String) {
-        toInvoke(this::onReadFailed) {
+    fun onFailed(code: Int, describe: Int) {
+        toInvoke(this::onFailed) {
+            withCode(code)
+            withDescribe(getString(describe, R.string.k_model_on_reader_failed))
+        }
+    }
+
+    fun onFailed(describe: String) {
+        toInvoke(this::onFailed) {
             withDescribe(describe)
         }
     }
 
-    fun onReadFailed(init: KReaderResult.() -> Unit) {
-        toInvoke(this::onReadFailed, init)
+    fun onFailed(code: Int, describe: String) {
+        toInvoke(this::onFailed) {
+            withCode(code)
+            withDescribe(describe)
+        }
     }
 
-    abstract fun onReadFailed(data: KReaderResult)
+    fun onFailed(init: KReaderResult.() -> Unit) {
+        toInvoke(this::onFailed, init)
+    }
+
+    abstract fun onFailed(data: KReaderResult)
     /**
      * OnReadFailed End
-     ****/
-    /**
-     * OnReadError Start
-     ****/
-    abstract fun onReadError(code: Int, headers: Headers)
-    /**
-     * OnReadError End
      ****/
 }

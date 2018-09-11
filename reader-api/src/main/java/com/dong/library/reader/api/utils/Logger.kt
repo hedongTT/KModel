@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.dong.library.reader.api.utils
 
 import android.util.Log
@@ -10,7 +12,7 @@ class Logger {
         private const val PREFIX = "[KReader]::"
         private var isDebug = false
 
-        fun openDebug() {
+        internal fun openDebug() {
             isDebug = true
         }
 
