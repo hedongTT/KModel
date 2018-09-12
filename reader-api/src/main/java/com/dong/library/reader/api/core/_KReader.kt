@@ -13,10 +13,7 @@ abstract class _KReader {
         return this
     }
 
-    protected var sCallback: KReaderCallback? = null
-
     internal fun request(key: String, params: HashMap<String, Any>, callback: KReaderCallback) {
-        sCallback = callback
         onRequest(key, params, callback)
     }
 
