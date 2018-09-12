@@ -167,24 +167,10 @@ abstract class KReaderCallback(internal val context: Context) {
         }
     }
 
-    fun onComplete(dataInit: HashMap<String, Any>.() -> Unit) {
-        toInvoke(this::onComplete) {
-            withDescribe(context.getString(R.string.k_model_on_reader_complete))
-            withData(dataInit)
-        }
-    }
-
-    fun onComplete(result: HashMap<String, Any>) {
-        toInvoke(this::onComplete) {
-            withDescribe(context.getString(R.string.k_model_on_reader_complete))
-            withData(result)
-        }
-    }
-
-    fun onComplete(@StringRes describe: Int, dataInit: HashMap<String, Any>.() -> Unit) {
+    fun onComplete(@StringRes describe: Int, resultInit: HashMap<String, Any>.() -> Unit) {
         toInvoke(this::onComplete) {
             withDescribe(getString(describe, R.string.k_model_on_reader_complete))
-            withData(dataInit)
+            withData(resultInit)
         }
     }
 
@@ -200,6 +186,10 @@ abstract class KReaderCallback(internal val context: Context) {
             withDescribe(describe)
             withData(result)
         }
+    }
+
+    fun onComplete(resultInit: KReaderResult.() -> Unit) {
+        toInvoke(this::onComplete, resultInit)
     }
 
     abstract fun onComplete(data: KReaderResult)
