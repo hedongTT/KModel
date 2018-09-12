@@ -10,10 +10,10 @@ public class Const {
     public static String V_PROCESSOR = "1.0.3";
     public static String V_ANNOTATION = "1.0.1";
     public static String V_OKHTTP = "3.9.1";
-    public static String V_RETROFIT = "2.1.0";
+    public static String V_RETROFIT = "2.3.0";
     public static String V_SCALARS = "2.0.2";
     public static String V_ANKO = "0.9.1";
-    public static String V_GSON = "2.0.1";
+    public static String V_GSON = "2.3.0";
 
     public static String KREADER_API = "com.dong.library:reader-api:" + V_API;
     public static String KREADER_PROCESSOR = "com.dong.library:reader-processors:" + V_PROCESSOR;
