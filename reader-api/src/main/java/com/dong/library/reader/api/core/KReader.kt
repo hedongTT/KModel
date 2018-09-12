@@ -212,23 +212,23 @@ abstract class KDelReader : _KReader() {
 
         onRequest(object : Helper {
 
-            override fun <T> get(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>) {
+            override fun <T> get(url: String, files: KFileList?, params: HashMap<String, String>, parser: IKReaderParser<T>) {
                 requestMethod(KReaderMethod.GET, api, url, params, files, parser, callback)
             }
 
-            override fun <T> put(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>) {
+            override fun <T> put(url: String, files: KFileList?, params: HashMap<String, String>, parser: IKReaderParser<T>) {
                 requestMethod(KReaderMethod.PUT, api, url, params, files, parser, callback)
             }
 
-            override fun <T> post(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>) {
+            override fun <T> post(url: String, files: KFileList?, params: HashMap<String, String>, parser: IKReaderParser<T>) {
                 requestMethod(KReaderMethod.POST, api, url, params, files, parser, callback)
             }
 
-            override fun <T> patch(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>) {
+            override fun <T> patch(url: String, files: KFileList?, params: HashMap<String, String>, parser: IKReaderParser<T>) {
                 requestMethod(KReaderMethod.PATCH, api, url, params, files, parser, callback)
             }
 
-            override fun <T> delete(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>) {
+            override fun <T> delete(url: String, files: KFileList?, params: HashMap<String, String>, parser: IKReaderParser<T>) {
                 requestMethod(KReaderMethod.DELETE, api, url, params, files, parser, callback)
             }
 
@@ -377,74 +377,74 @@ abstract class KDelReader : _KReader() {
         }
 
         fun <T> get(url: String, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
-            get(url, createStringMap(init), null, parser)
+            get(url, null, createStringMap(init), parser)
         }
 
-        fun <T> get(url: String, init: KStringMap.() -> Unit, files: KFileList?, parser: IKReaderParser<T>) {
-            get(url, createStringMap(init), files, parser)
+        fun <T> get(url: String, files: KFileList?, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
+            get(url, files, createStringMap(init), parser)
         }
 
         fun <T> get(url: String, params: HashMap<String, String>, parser: IKReaderParser<T>) {
-            get(url, params, null, parser)
+            get(url, null, params, parser)
         }
 
-        fun <T> get(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>)
+        fun <T> get(url: String, files: KFileList?, params: HashMap<String, String>, parser: IKReaderParser<T>)
 
         fun <T> put(url: String, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
-            put(url, createStringMap(init), null, parser)
+            put(url, null, createStringMap(init), parser)
         }
 
-        fun <T> put(url: String, init: KStringMap.() -> Unit, files: KFileList?, parser: IKReaderParser<T>) {
-            put(url, createStringMap(init), files, parser)
+        fun <T> put(url: String, files: KFileList?, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
+            put(url, files, createStringMap(init), parser)
         }
 
         fun <T> put(url: String, params: HashMap<String, String>, parser: IKReaderParser<T>) {
-            put(url, params, null, parser)
+            put(url, null, params, parser)
         }
 
-        fun <T> put(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>)
+        fun <T> put(url: String, files: KFileList?, params: HashMap<String, String>, parser: IKReaderParser<T>)
 
         fun <T> post(url: String, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
-            post(url, createStringMap(init), parser)
+            post(url, null, createStringMap(init), parser)
         }
 
-        fun <T> post(url: String, init: KStringMap.() -> Unit, files: KFileList?, parser: IKReaderParser<T>) {
-            post(url, createStringMap(init), null, parser)
+        fun <T> post(url: String, files: KFileList?, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
+            post(url, files, createStringMap(init), parser)
         }
 
         fun <T> post(url: String, params: HashMap<String, String>, parser: IKReaderParser<T>) {
-            post(url, params, null, parser)
+            post(url, null, params, parser)
         }
 
-        fun <T> post(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>)
+        fun <T> post(url: String, files: KFileList?, params: HashMap<String, String>, parser: IKReaderParser<T>)
 
         fun <T> patch(url: String, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
-            patch(url, createStringMap(init), null, parser)
+            patch(url, null, createStringMap(init), parser)
         }
 
-        fun <T> patch(url: String, init: KStringMap.() -> Unit, files: KFileList?, parser: IKReaderParser<T>) {
-            patch(url, createStringMap(init), files, parser)
+        fun <T> patch(url: String, files: KFileList?, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
+            patch(url, files, createStringMap(init), parser)
         }
 
         fun <T> patch(url: String, params: HashMap<String, String>, parser: IKReaderParser<T>) {
-            patch(url, params, null, parser)
+            patch(url, null, params, parser)
         }
 
-        fun <T> patch(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>)
+        fun <T> patch(url: String, files: KFileList?, params: HashMap<String, String>, parser: IKReaderParser<T>)
 
         fun <T> delete(url: String, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
-            delete(url, createStringMap(init), null, parser)
+            delete(url, null, createStringMap(init), parser)
         }
 
-        fun <T> delete(url: String, init: KStringMap.() -> Unit, files: KFileList?, parser: IKReaderParser<T>) {
-            delete(url, createStringMap(init), files, parser)
+        fun <T> delete(url: String, files: KFileList?, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
+            delete(url, files, createStringMap(init), parser)
         }
 
         fun <T> delete(url: String, params: HashMap<String, String>, parser: IKReaderParser<T>) {
-            delete(url, params, null, parser)
+            delete(url, null, params, parser)
         }
 
-        fun <T> delete(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>)
+        fun <T> delete(url: String, files: KFileList?, params: HashMap<String, String>, parser: IKReaderParser<T>)
 
         fun onFailed(code: Int, @StringRes describe: Int)
 
