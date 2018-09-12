@@ -3,6 +3,7 @@
 package com.dong.library.reader.api.core
 
 import android.support.annotation.CallSuper
+import android.support.annotation.StringRes
 import com.dong.library.reader.api.R
 import com.dong.library.reader.api.core.callback.KReaderCallback
 import com.dong.library.reader.api.core.enums.KReaderMethod
@@ -78,7 +79,6 @@ abstract class KReader<in Api> : _KReader() {
     }
 
     final override fun onRequest(key: String, params: HashMap<String, Any>, callback: KReaderCallback) {
-        sCallback = callback
         val api: Api = getApi(params)
         onRequest(api, key, params, callback)
     }
@@ -86,9 +86,9 @@ abstract class KReader<in Api> : _KReader() {
     abstract fun onRequest(api: Api, key: String, params: HashMap<String, Any>, callback: KReaderCallback)
 
     @CallSuper
-    protected open fun <Type> applyCall(describe: Int, call: Call<String>, parser: IKReaderParser<Type>) {
+    protected open fun <T> applyCall(describe: Int, call: Call<String>, parser: IKReaderParser<T>, callback: KReaderCallback) {
 
-        sCallback?.onStart(describe)
+        callback.onStart(describe)
 
         Logger.d("applyCall describe=${mContext.getString(describe)}")
 
@@ -96,7 +96,7 @@ abstract class KReader<in Api> : _KReader() {
 
             override fun onFailure(call: Call<String>, t: Throwable) {
                 Logger.d("applyCall onFailure")
-                sCallback?.onFailed(t.message ?: "net failed")
+                callback.onFailed(t.message ?: "net failed")
             }
 
             override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -108,7 +108,7 @@ abstract class KReader<in Api> : _KReader() {
                         200 -> {
                             val body: String = response.body()
 
-                            parser.onParse(headers, body, { c: Int, result: Type?, any: Any? ->
+                            parser.onParse(headers, body, { c: Int, result: T?, any: Any? ->
                                 Logger.d("applyCall onResponse parse complete")
                                 uiThread {
                                     parser.onComplete(KRequestInfo(c, any), result)
@@ -116,7 +116,7 @@ abstract class KReader<in Api> : _KReader() {
                             }, { errorCode: Int, describe: Int ->
                                 Logger.d("applyCall onResponse parse error code=$errorCode")
                                 uiThread {
-                                    sCallback?.onFailed(errorCode, describe)
+                                    callback.onFailed(errorCode, describe)
                                 }
                             })
                         }
@@ -129,7 +129,7 @@ abstract class KReader<in Api> : _KReader() {
                         else -> {
                             Logger.d("applyCall onResponse unKnow code: $code")
                             uiThread {
-                                sCallback?.onFailed(code)
+                                callback.onFailed(code)
                             }
                         }
                     }
@@ -170,14 +170,12 @@ abstract class KDelReader : _KReader() {
 
     private var mClient: OkHttpClient? = null
 
-    private val mApiCls: Class<KDelApi> = KDelApi::class.java
-
     private var mApi: KDelApi? = null
 
     private fun getApi(params: HashMap<String, Any>): KDelApi {
         val retrofit: Retrofit = getRetrofit(params)
 
-        mApi = mApi ?: retrofit.create(mApiCls)
+        mApi = mApi ?: retrofit.create(KDelApi::class.java)
 
         return mApi ?: throw RuntimeException()
     }
@@ -209,37 +207,55 @@ abstract class KDelReader : _KReader() {
     }
 
     final override fun onRequest(key: String, params: HashMap<String, Any>, callback: KReaderCallback) {
-        sCallback = callback
-        val api: KDelApi = getApi(params)
 
-        //onRequest(key, params, callback)
+        val api: KDelApi = getApi(params)
 
         onRequest(object : Helper {
 
             override fun <T> get(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>) {
-                requestMethod(KReaderMethod.GET, api, url, params, files, parser)
+                requestMethod(KReaderMethod.GET, api, url, params, files, parser, callback)
             }
 
             override fun <T> put(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>) {
-                requestMethod(KReaderMethod.PUT, api, url, params, files, parser)
+                requestMethod(KReaderMethod.PUT, api, url, params, files, parser, callback)
             }
 
             override fun <T> post(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>) {
-                requestMethod(KReaderMethod.POST, api, url, params, files, parser)
+                requestMethod(KReaderMethod.POST, api, url, params, files, parser, callback)
             }
 
             override fun <T> patch(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>) {
-                requestMethod(KReaderMethod.PATCH, api, url, params, files, parser)
+                requestMethod(KReaderMethod.PATCH, api, url, params, files, parser, callback)
             }
 
             override fun <T> delete(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>) {
-                requestMethod(KReaderMethod.DELETE, api, url, params, files, parser)
+                requestMethod(KReaderMethod.DELETE, api, url, params, files, parser, callback)
             }
 
+            override fun onFailed(code: Int, describe: Int) {
+                callback.onFailed(code, describe)
+            }
+
+            override fun onFailed(code: Int, describe: String) {
+                callback.onFailed(code, describe)
+            }
+
+            override fun onComplete(info: KRequestInfo, describe: Int, result: HashMap<String, Any>) {
+                callback.onComplete {
+                    withDescribe(try {
+                        mContext.getString(describe)
+                    } catch (e: Exception) {
+                        mContext.getString(R.string.k_model_on_reader_complete)
+                    })
+                    withAny(info.any)
+                    withCode(info.code)
+                    withData(result)
+                }
+            }
         }, key, params)
     }
 
-    protected open fun <T> requestMethod(method: KReaderMethod, api: KDelApi, url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>) {
+    protected open fun <T> requestMethod(method: KReaderMethod, api: KDelApi, url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>, callback: KReaderCallback) {
 
         val callFunc = when (method) {
             KReaderMethod.GET -> api::get
@@ -249,7 +265,7 @@ abstract class KDelReader : _KReader() {
             KReaderMethod.DELETE -> api::delete
         }
 
-        applyCall(R.string.k_model_on_reader_start, callFunc.invoke(url, createBody(params, files)), parser)
+        applyCall(R.string.k_model_on_reader_start, callFunc.invoke(url, createBody(params, files)), parser, callback)
     }
 
     protected open fun createBody(params: HashMap<String, String>, files: KFileList? = null): RequestBody {
@@ -283,9 +299,8 @@ abstract class KDelReader : _KReader() {
     abstract fun onRequest(helper: Helper, key: String, params: HashMap<String, Any>)
 
     @CallSuper
-    protected open fun <Type> applyCall(describe: Int, call: Call<String>, parser: IKReaderParser<Type>) {
-
-        sCallback?.onStart(describe)
+    protected open fun <T> applyCall(describe: Int, call: Call<String>, parser: IKReaderParser<T>, callback: KReaderCallback) {
+        callback.onStart(describe)
 
         Logger.d("applyCall describe=${mContext.getString(describe)}")
 
@@ -293,7 +308,7 @@ abstract class KDelReader : _KReader() {
 
             override fun onFailure(call: Call<String>, t: Throwable) {
                 Logger.d("applyCall onFailure")
-                sCallback?.onFailed(t.message ?: "net failed")
+                callback.onFailed(t.message ?: "net failed")
             }
 
             override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -305,7 +320,7 @@ abstract class KDelReader : _KReader() {
                         200 -> {
                             val body: String = response.body()
 
-                            parser.onParse(headers, body, { c: Int, result: Type?, any: Any? ->
+                            parser.onParse(headers, body, { c: Int, result: T?, any: Any? ->
                                 Logger.d("applyCall onResponse parse complete")
                                 uiThread {
                                     parser.onComplete(KRequestInfo(c, any), result)
@@ -313,7 +328,7 @@ abstract class KDelReader : _KReader() {
                             }, { errorCode: Int, describe: Int ->
                                 Logger.d("applyCall onResponse parse error code=$errorCode")
                                 uiThread {
-                                    sCallback?.onFailed(errorCode, describe)
+                                    callback.onFailed(errorCode, describe)
                                 }
                             })
                         }
@@ -321,12 +336,12 @@ abstract class KDelReader : _KReader() {
                         206 -> {
                             // download?
                             Logger.d("applyCall onResponse 206, try to download")
-                            onDownload(headers, response.errorBody())
+                            onDownload(headers, response.errorBody(), callback)
                         }
                         else -> {
                             Logger.d("applyCall onResponse unKnow code: $code")
                             uiThread {
-                                sCallback?.onFailed(code)
+                                callback.onFailed(code)
                             }
                         }
                     }
@@ -335,7 +350,9 @@ abstract class KDelReader : _KReader() {
         })
     }
 
-    protected open fun onDownload(headers: Headers, body: ResponseBody) {}
+    protected open fun onDownload(headers: Headers, body: ResponseBody, callback: KReaderCallback) {
+        callback.onComplete()
+    }
 
     companion object {
 
@@ -347,18 +364,24 @@ abstract class KDelReader : _KReader() {
 
     interface Helper {
 
-        private fun createHashMap(init: KStringMap.() -> Unit): KStringMap {
+        private fun createStringMap(init: KStringMap.() -> Unit): KStringMap {
             val map = KStringMap()
             map.init()
             return map
         }
 
+        private fun createAnyMap(init: HashMap<String, Any>.() -> Unit): HashMap<String, Any> {
+            val map = HashMap<String, Any>()
+            map.init()
+            return map
+        }
+
         fun <T> get(url: String, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
-            get(url, createHashMap(init), null, parser)
+            get(url, createStringMap(init), null, parser)
         }
 
         fun <T> get(url: String, init: KStringMap.() -> Unit, files: KFileList?, parser: IKReaderParser<T>) {
-            get(url, createHashMap(init), files, parser)
+            get(url, createStringMap(init), files, parser)
         }
 
         fun <T> get(url: String, params: HashMap<String, String>, parser: IKReaderParser<T>) {
@@ -368,11 +391,11 @@ abstract class KDelReader : _KReader() {
         fun <T> get(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>)
 
         fun <T> put(url: String, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
-            put(url, createHashMap(init), null, parser)
+            put(url, createStringMap(init), null, parser)
         }
 
         fun <T> put(url: String, init: KStringMap.() -> Unit, files: KFileList?, parser: IKReaderParser<T>) {
-            put(url, createHashMap(init), files, parser)
+            put(url, createStringMap(init), files, parser)
         }
 
         fun <T> put(url: String, params: HashMap<String, String>, parser: IKReaderParser<T>) {
@@ -382,11 +405,11 @@ abstract class KDelReader : _KReader() {
         fun <T> put(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>)
 
         fun <T> post(url: String, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
-            post(url, createHashMap(init), parser)
+            post(url, createStringMap(init), parser)
         }
 
         fun <T> post(url: String, init: KStringMap.() -> Unit, files: KFileList?, parser: IKReaderParser<T>) {
-            post(url, createHashMap(init), null, parser)
+            post(url, createStringMap(init), null, parser)
         }
 
         fun <T> post(url: String, params: HashMap<String, String>, parser: IKReaderParser<T>) {
@@ -396,11 +419,11 @@ abstract class KDelReader : _KReader() {
         fun <T> post(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>)
 
         fun <T> patch(url: String, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
-            patch(url, createHashMap(init), null, parser)
+            patch(url, createStringMap(init), null, parser)
         }
 
         fun <T> patch(url: String, init: KStringMap.() -> Unit, files: KFileList?, parser: IKReaderParser<T>) {
-            patch(url, createHashMap(init), files, parser)
+            patch(url, createStringMap(init), files, parser)
         }
 
         fun <T> patch(url: String, params: HashMap<String, String>, parser: IKReaderParser<T>) {
@@ -410,11 +433,11 @@ abstract class KDelReader : _KReader() {
         fun <T> patch(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>)
 
         fun <T> delete(url: String, init: KStringMap.() -> Unit, parser: IKReaderParser<T>) {
-            delete(url, createHashMap(init), null, parser)
+            delete(url, createStringMap(init), null, parser)
         }
 
         fun <T> delete(url: String, init: KStringMap.() -> Unit, files: KFileList?, parser: IKReaderParser<T>) {
-            delete(url, createHashMap(init), files, parser)
+            delete(url, createStringMap(init), files, parser)
         }
 
         fun <T> delete(url: String, params: HashMap<String, String>, parser: IKReaderParser<T>) {
@@ -422,5 +445,31 @@ abstract class KDelReader : _KReader() {
         }
 
         fun <T> delete(url: String, params: HashMap<String, String>, files: KFileList?, parser: IKReaderParser<T>)
+
+        fun onFailed(code: Int, @StringRes describe: Int)
+
+        fun onFailed(code: Int, describe: String)
+
+        fun onComplete(info: KRequestInfo) {
+            onComplete(info, R.string.k_model_on_reader_complete, HashMap())
+        }
+
+        fun onComplete(info: KRequestInfo, describe: Int) {
+            onComplete(info, describe, HashMap())
+        }
+
+        fun onComplete(info: KRequestInfo, resultInit: HashMap<String, Any>.() -> Unit) {
+            onComplete(info, R.string.k_model_on_reader_complete, createAnyMap(resultInit))
+        }
+
+        fun onComplete(info: KRequestInfo, result: HashMap<String, Any>) {
+            onComplete(info, R.string.k_model_on_reader_complete, result)
+        }
+
+        fun onComplete(info: KRequestInfo, describe: Int, resultInit: HashMap<String, Any>.() -> Unit) {
+            onComplete(info, describe, createAnyMap(resultInit))
+        }
+
+        fun onComplete(info: KRequestInfo, describe: Int, result: HashMap<String, Any>)
     }
 }
